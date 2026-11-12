@@ -51,7 +51,7 @@
   @media(max-width:1100px){.toolbar-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.toolbar-grid{grid-template-columns:1fr}}
   .field{display:flex;flex-direction:column;gap:6px}
-  .field label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .field label{font-size:12px;font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:.5px}
   select,input[type=text],input[type=search]{
     border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13px;background:#fff;color:var(--text);outline:none;
     transition:border-color .15s, box-shadow .15s; width:100%;
@@ -540,17 +540,17 @@ async function renderMap(){
       formatter: p => {
         const v = p.value || 0;
         const namaTitle = toTitleCase(p.name);
-        return `<div style="font-weight:600;margin-bottom:3px">${namaTitle}</div>
-                <div style="color:#475569">Karya inovasi: <b style="color:#1d4ed8">${v}</b></div>`;
+        return `<div style="font-weight:700;font-size:13px;color:#fff;margin-bottom:4px;border-bottom:1px solid #334155;padding-bottom:4px">${namaTitle}</div>
+                <div style="color:#cbd5e1;font-size:12px;margin-top:2px">Karya inovasi: <b style="color:#fbbf24;font-size:14px">${v}</b></div>`;
       },
       backgroundColor:'#0f172a', borderColor:'#0f172a', textStyle:{color:'#fff', fontSize:12},
-      padding:10
+      padding:12, extraCssText:'box-shadow:0 4px 12px rgba(0,0,0,.4);border-radius:8px;'
     },
     visualMap:{
       type:'continuous', min:0, max:maxVal,
       left:18, bottom:18,
       text:['Banyak','Sedikit'],
-      textStyle:{color:'#475569', fontSize:11},
+      textStyle:{color:'#0f172a', fontSize:11, fontWeight:600},
       inRange:{color:['#dbeafe','#93c5fd','#3b82f6','#1d4ed8','#1e3a8a']},
       calculable:true,
       itemWidth:14, itemHeight:90
