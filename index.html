@@ -66,8 +66,20 @@
   .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn.ghost:hover{background:#f8fafc}
 
-  /* ---------- KPI ---------- */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px}
+  /* ---------- KPI (2 baris simetris) ---------- */
+  .kpis{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+  .kpi-row{display:grid;gap:14px}
+  .kpi-row.row-4{grid-template-columns:repeat(4,1fr)}
+  /* Baris bawah: 2 kartu selebar 2 kolom tengah baris atas (50% - setengah gap)
+     lalu di-center → pas simetris di tengah halaman */
+  .kpi-row.row-2{grid-template-columns:repeat(2,1fr);width:calc(50% - 7px);margin:0 auto}
+  @media(max-width:1100px){
+    .kpi-row.row-4{grid-template-columns:repeat(2,1fr)}
+    .kpi-row.row-2{width:100%}
+  }
+  @media(max-width:640px){
+    .kpi-row.row-4,.kpi-row.row-2{grid-template-columns:1fr;width:100%}
+  }
   .kpi{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
     box-shadow:var(--shadow);position:relative;overflow:hidden;
@@ -313,8 +325,11 @@
     </div>
   </div>
 
-  <!-- KPI -->
-  <div class="kpis" id="kpis"></div>
+  <!-- KPI: baris atas 4 kartu, baris bawah 2 kartu (center, simetris) -->
+  <div class="kpis">
+    <div class="kpi-row row-4" id="kpis-top"></div>
+    <div class="kpi-row row-2" id="kpis-bottom"></div>
+  </div>
 
   <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
@@ -728,20 +743,24 @@ function renderKPI(){
   // di antara filter aktif, berapa alumni berprestasi yg masuk
   const alumniInFilter = filtered.filter(r=>r.prestasi).length;
 
+  // Urutan kartu: baris atas = Total Karya, Instansi Unik, Provinsi Terjangkau, Karya Pemda/K/L
+  //               baris bawah = ★ Karya Terbaik, 🏆 Alumni Berprestasi (di-center)
   const kpis = [
     {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
-    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
-    {cls:'k6', label:'🏆 Alumni Berprestasi', value:alumniInFilter.toLocaleString('id-ID'), sub:`dari ${totalAlumni.toLocaleString('id-ID')} total • penghargaan pasca-diklat`},
     {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
     {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
     {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
+    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
+    {cls:'k6', label:'🏆 Alumni Berprestasi', value:alumniInFilter.toLocaleString('id-ID'), sub:`dari ${totalAlumni.toLocaleString('id-ID')} total • penghargaan pasca-diklat`},
   ];
-  document.getElementById('kpis').innerHTML = kpis.map(k=>`
+  const kpiCard = k=>`
     <div class="kpi ${k.cls}">
       <div class="label">${k.label}</div>
       <div class="value">${k.value}</div>
       <div class="sub">${k.sub}</div>
-    </div>`).join('');
+    </div>`;
+  document.getElementById('kpis-top').innerHTML = kpis.slice(0,4).map(kpiCard).join('');
+  document.getElementById('kpis-bottom').innerHTML = kpis.slice(4).map(kpiCard).join('');
 }
 
 const PALETTE = ['#1d4ed8','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#06b6d4'];
