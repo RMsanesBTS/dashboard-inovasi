@@ -117,11 +117,6 @@
     background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;border-color:#f59e0b;
     box-shadow:0 3px 10px rgba(245,158,11,.4);
   }
-  .btn-terbaik .cnt{
-    background:rgba(146,64,14,.15);color:#92400e;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
-  }
-  .btn-terbaik.active .cnt{background:rgba(255,255,255,.28);color:#fff}
-
   /* ---------- Tombol "Alumni Berprestasi" di search box ---------- */
   .btn-alumni{
     display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
@@ -133,10 +128,6 @@
     background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
     box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
-  .btn-alumni .cnt{
-    background:rgba(6,95,70,.15);color:#065f46;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
-  }
-  .btn-alumni.active .cnt{background:rgba(255,255,255,.28);color:#fff}
 
   /* ---------- Cross-badge 🏆 di tabel utama (alumni berprestasi) ---------- */
   table tr.alumni-row{box-shadow:inset 3px 0 0 #10b981}
@@ -306,13 +297,13 @@
       <div class="field">
         <label>&nbsp;</label>
         <button class="btn-terbaik" id="btn-terbaik" type="button" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
-          ★ Peserta Terbaik <span class="cnt" id="btn-terbaik-cnt">0</span>
+          ★ Peserta Terbaik
         </button>
       </div>
       <div class="field">
         <label>&nbsp;</label>
         <button class="btn-alumni" id="btn-alumni" type="button" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
-          🏆 Alumni Berprestasi <span class="cnt" id="btn-alumni-cnt">0</span>
+          🏆 Alumni Berprestasi
         </button>
       </div>
       <div class="field">
@@ -554,16 +545,9 @@ function applyFilter(){
   if(onlyAlumniOn)  f = f.filter(r => r.prestasi);
   filtered = f;
   page = 1;
-  // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif (pakai baseFiltered, bukan filtered)
-  const terbaikInFilter = baseFiltered.filter(r => r.terbaik).length;
-  const cntEl = document.getElementById('btn-terbaik-cnt');
-  if(cntEl) cntEl.textContent = terbaikInFilter.toLocaleString('id-ID');
+  // Update status aktif tombol toggle (angka di tombol dihapus — angka sudah tampil di kartu KPI)
   const btnTerbaik = document.getElementById('btn-terbaik');
   if(btnTerbaik) btnTerbaik.classList.toggle('active', onlyTerbaikOn);
-  // Update tombol "🏆 Alumni Berprestasi" — jumlah alumni dalam filter aktif (pakai baseFiltered)
-  const alumniInFilter = baseFiltered.filter(r => r.prestasi).length;
-  const cntAl = document.getElementById('btn-alumni-cnt');
-  if(cntAl) cntAl.textContent = alumniInFilter.toLocaleString('id-ID');
   const btnAlumni = document.getElementById('btn-alumni');
   if(btnAlumni) btnAlumni.classList.toggle('active', onlyAlumniOn);
   renderKPI();
