@@ -66,20 +66,11 @@
   .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn.ghost:hover{background:#f8fafc}
 
-  /* ---------- KPI (2 baris simetris) ---------- */
-  .kpis{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
-  .kpi-row{display:grid;gap:14px}
-  .kpi-row.row-4{grid-template-columns:repeat(4,1fr)}
-  /* Baris bawah: 2 kartu selebar 2 kolom tengah baris atas (50% - setengah gap)
-     lalu di-center → pas simetris di tengah halaman */
-  .kpi-row.row-2{grid-template-columns:repeat(2,1fr);width:calc(50% - 7px);margin:0 auto}
-  @media(max-width:1100px){
-    .kpi-row.row-4{grid-template-columns:repeat(2,1fr)}
-    .kpi-row.row-2{width:100%}
-  }
-  @media(max-width:640px){
-    .kpi-row.row-4,.kpi-row.row-2{grid-template-columns:1fr;width:100%}
-  }
+  /* ---------- KPI (1 baris, 6 kartu) ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px}
+  /* Layar lebih kecil: 3 kolom (2 baris), lalu 1 kolom di HP */
+  @media(max-width:1280px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:640px){.kpis{grid-template-columns:1fr}}
   .kpi{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
     box-shadow:var(--shadow);position:relative;overflow:hidden;
@@ -325,11 +316,8 @@
     </div>
   </div>
 
-  <!-- KPI: baris atas 4 kartu, baris bawah 2 kartu (center, simetris) -->
-  <div class="kpis">
-    <div class="kpi-row row-4" id="kpis-top"></div>
-    <div class="kpi-row row-2" id="kpis-bottom"></div>
-  </div>
+  <!-- KPI: 6 kartu dalam 1 baris -->
+  <div class="kpis" id="kpis"></div>
 
   <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
@@ -759,8 +747,7 @@ function renderKPI(){
       <div class="value">${k.value}</div>
       <div class="sub">${k.sub}</div>
     </div>`;
-  document.getElementById('kpis-top').innerHTML = kpis.slice(0,4).map(kpiCard).join('');
-  document.getElementById('kpis-bottom').innerHTML = kpis.slice(4).map(kpiCard).join('');
+  document.getElementById('kpis').innerHTML = kpis.map(kpiCard).join('');
 }
 
 const PALETTE = ['#1d4ed8','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#06b6d4'];
