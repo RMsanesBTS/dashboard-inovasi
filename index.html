@@ -743,14 +743,14 @@ function renderKPI(){
   // di antara filter aktif, berapa alumni berprestasi yg masuk
   const alumniInFilter = filtered.filter(r=>r.prestasi).length;
 
-  // Urutan kartu: baris atas = Total Karya, Instansi Unik, Provinsi Terjangkau, Karya Pemda/K/L
-  //               baris bawah = ★ Karya Terbaik, 🏆 Alumni Berprestasi (di-center)
+  // Urutan kartu: baris atas = Total Inovasi, Instansi, Provinsi, Inovasi Pemda/K/L
+  //               baris bawah = ★ Peserta Terbaik, 🏆 Alumni Berprestasi (di-center)
   const kpis = [
-    {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
-    {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
-    {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
-    {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
-    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
+    {cls:'', label:'Total Inovasi', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
+    {cls:'k2', label:'Instansi', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
+    {cls:'k3', label:'Provinsi', value:provSet.size, sub:'provinsi berbeda'},
+    {cls:'k4', label:'Inovasi: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
+    {cls:'k5', label:'★ Peserta Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
     {cls:'k6', label:'🏆 Alumni Berprestasi', value:alumniInFilter.toLocaleString('id-ID'), sub:`dari ${totalAlumni.toLocaleString('id-ID')} total • penghargaan pasca-diklat`},
   ];
   const kpiCard = k=>`
