@@ -67,9 +67,10 @@
   .btn.ghost:hover{background:#f8fafc}
 
   /* ---------- KPI (1 baris, 6 kartu) ---------- */
-  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px}
-  /* Layar lebih kecil: 3 kolom (2 baris), lalu 1 kolom di HP */
-  @media(max-width:1280px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,1vw,14px);margin-bottom:20px}
+  /* Ukuran kartu fluid (clamp) → 6 kartu tetap muat 1 baris sampai layar ~1024px;
+     di bawahnya baru 3 kolom (tablet) lalu 1 kolom (HP) */
+  @media(max-width:1024px){.kpis{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:640px){.kpis{grid-template-columns:1fr}}
   .kpi{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
@@ -88,6 +89,11 @@
   .kpi .label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
+  /* Fluid sizing: menyusut mulus mengikuti lebar layar agar 6 kartu tak kelepotan */
+  .kpi{padding:clamp(12px,1.25vw,18px) clamp(12px,1.4vw,20px)}
+  .kpi .label{font-size:clamp(10px,.82vw,11.5px)}
+  .kpi .value{font-size:clamp(20px,2.15vw,30px)}
+  .kpi .sub{font-size:clamp(10.5px,.87vw,12px)}
 
   /* ---------- Penanda baris Terbaik di tabel utama ---------- */
   table tr.terbaik-row{background:#fffbeb !important}
