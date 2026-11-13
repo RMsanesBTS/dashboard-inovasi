@@ -386,7 +386,8 @@
 
 <script>
 let DATA = null;
-let filtered = [];
+let filtered = [];      // hasil akhir: baseFiltered + filter toggle "Peserta Terbaik" (dipakai KPI/charts/map/tabel)
+let baseFiltered = []; // hasil search + dropdown saja (TANPA toggle terbaik) — untuk badge tombol & info pill
 let page = 1;
 let namaFocus = '';        // nama peserta yang dipilih (untuk label info saja)
 let idFocus = 0;           // id record yang dipilih dari "Peserta Terbaik" — filter tabel ke karya TEPAT itu
@@ -487,7 +488,8 @@ function applyFilter(){
   const adm = document.getElementById('f-adm').value;
   const bid = document.getElementById('f-bidang').value;
 
-  filtered = DATA.records.filter(r=>{
+  // baseFiltered: hasil search + dropdown saja (TANPA toggle terbaik)
+  baseFiltered = DATA.records.filter(r=>{
     if(q && !(r.nama.toLowerCase().includes(q) || r.judul.toLowerCase().includes(q))) return false;
     if(prov && r.provinsi !== prov) return false;
     if(tahun && r.tahun !== tahun) return false;
@@ -497,9 +499,11 @@ function applyFilter(){
     if(bid && r.bidang_inovasi !== bid) return false;
     return true;
   });
+  // filtered: baseFiltered + filter toggle "Peserta Terbaik" (dipakai KPI/charts/map/tabel)
+  filtered = onlyTerbaikOn ? baseFiltered.filter(r => r.terbaik) : baseFiltered;
   page = 1;
-  // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif
-  const terbaikInFilter = filtered.filter(r => r.terbaik).length;
+  // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif (pakai baseFiltered, bukan filtered)
+  const terbaikInFilter = baseFiltered.filter(r => r.terbaik).length;
   const cntEl = document.getElementById('btn-terbaik-cnt');
   if(cntEl) cntEl.textContent = terbaikInFilter.toLocaleString('id-ID');
   const btnTerbaik = document.getElementById('btn-terbaik');
@@ -839,8 +843,7 @@ function chartOpts(o={}){
 function renderTable(){
   const tbody = document.getElementById('tbody');
   const onlyTerbaik = onlyTerbaikOn;
-  let tblRecords = filtered;
-  if(onlyTerbaik) tblRecords = tblRecords.filter(r => r.terbaik);
+  let tblRecords = filtered;   // filtered sudah termasuk filter toggle terbaik (lihat applyFilter)
   if(idFocus)      tblRecords = tblRecords.filter(r => r.id === idFocus);
   const total = tblRecords.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -931,7 +934,7 @@ document.getElementById('btn-terbaik').addEventListener('click', ()=>{
   applyFilter();
   if(onlyTerbaikOn){
     document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
-    toast(`Menampilkan hanya peserta terbaik (${filtered.filter(r=>r.terbaik).length} karya)`);
+    toast(`Menampilkan hanya peserta terbaik (${filtered.length.toLocaleString('id-ID')} karya)`);
   } else {
     toast('Menampilkan semua karya');
   }
