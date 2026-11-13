@@ -113,68 +113,21 @@
   }
   .btn-terbaik.active .cnt{background:rgba(255,255,255,.28);color:#fff}
 
-  /* ---------- ALUMNI BERPRESTASI (penghargaan setelah diklat) ---------- */
-  .alumni-card{
-    background:linear-gradient(180deg,#ffffff 0%,#ecfdf5 100%);
-    border:1px solid #a7f3d0;border-radius:16px;padding:20px 22px;
-    box-shadow:var(--shadow-lg);margin-bottom:20px;position:relative;overflow:hidden;
+  /* ---------- Tombol "Alumni Berprestasi" di search box ---------- */
+  .btn-alumni{
+    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
+    color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:8px 14px;
+    user-select:none;transition:all .12s;white-space:nowrap;
   }
-  .alumni-card::before{
-    content:"";position:absolute;right:-50px;top:-50px;width:200px;height:200px;
-    background:radial-gradient(circle, rgba(16,185,129,.16) 0%, rgba(16,185,129,0) 70%);
-    pointer-events:none;
+  .btn-alumni:hover{background:#d1fae5;border-color:#10b981}
+  .btn-alumni.active{
+    background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
+    box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
-  .alumni-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;position:relative}
-  .alumni-head .ttl{display:flex;align-items:center;gap:12px}
-  .alumni-head .ttl .cup{
-    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:20px;font-weight:800;
-    box-shadow:0 4px 12px rgba(16,185,129,.4);
+  .btn-alumni .cnt{
+    background:rgba(6,95,70,.15);color:#065f46;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
   }
-  .alumni-head h3{margin:0;font-size:16px;font-weight:800;color:var(--text)}
-  .alumni-head .desc{margin:2px 0 0;font-size:12px;color:var(--muted)}
-  .alumni-head .info-pill{
-    background:#fff;border:1px solid #a7f3d0;color:#065f46;border-radius:999px;
-    padding:6px 14px;font-size:12px;font-weight:600;
-  }
-  .alumni-head .info-pill b{color:#064e3b;font-size:13px}
-
-  .alumni-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px}
-  .alumni-stats .ap-pill{
-    background:#fff;border:1px solid #a7f3d0;border-radius:999px;
-    padding:5px 12px;font-size:11.5px;color:#065f46;
-  }
-  .alumni-stats .ap-pill b{color:#064e3b;font-weight:800}
-
-  .alumni-search{margin-bottom:12px}
-  .alumni-search input{
-    width:100%;padding:9px 12px;font-size:13px;border:1px solid #a7f3d0;border-radius:8px;
-    background:#fff;color:var(--text);outline:none;
-  }
-  .alumni-search input:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.15)}
-
-  .alumni-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:520px;background:#fff}
-  .alumni-table{width:100%;border-collapse:collapse;font-size:12.5px}
-  .alumni-table th{
-    background:linear-gradient(135deg,#047857,#10b981);color:#fff;font-weight:600;font-size:11px;
-    text-transform:uppercase;letter-spacing:.4px;padding:9px 11px;text-align:left;position:sticky;top:0;z-index:2;
-  }
-  .alumni-table td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top}
-  .alumni-table tbody tr:nth-child(even){background:#ecfdf5}
-  .alumni-table tbody tr{cursor:pointer;transition:background .12s}
-  .alumni-table tbody tr:hover{background:#d1fae5}
-  .alumni-table td.ap-no{font-weight:700;color:#047857;width:42px;text-align:center}
-  .alumni-table td.ap-nama{font-weight:700;color:var(--text);min-width:150px}
-  .alumni-table td.ap-nama .ap-badge{
-    display:inline-block;background:linear-gradient(135deg,#059669,#10b981);color:#fff;
-    border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;
-    letter-spacing:.3px;
-  }
-  .alumni-table td.ap-prestasi{max-width:340px;color:var(--text)}
-  .alumni-table td.ap-prestasi a{color:#047857;text-decoration:none;font-weight:600;word-break:break-all}
-  .alumni-table td.ap-prestasi a:hover{text-decoration:underline}
-  .alumni-table td.ap-meta{font-size:11px;color:var(--muted)}
-  .alumni-foot{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+  .btn-alumni.active .cnt{background:rgba(255,255,255,.28);color:#fff}
 
   /* ---------- Cross-badge 🏆 di tabel utama (alumni berprestasi) ---------- */
   table tr.alumni-row{box-shadow:inset 3px 0 0 #10b981}
@@ -182,8 +135,9 @@
   table tr.alumni-row td.nama .ap-mini{
     display:inline-block;background:linear-gradient(135deg,#059669,#10b981);color:#fff;
     border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;
-    letter-spacing:.3px;white-space:nowrap;
+    letter-spacing:.3px;white-space:nowrap;text-decoration:none;cursor:pointer;
   }
+  table tr.alumni-row td.nama a.ap-mini:hover{background:linear-gradient(135deg,#047857,#059669);box-shadow:0 2px 6px rgba(16,185,129,.5)}
   table tr.alumni-row td.nama .ap-mini::before{content:"🏆 "}
   /* Baris yang punya DUA badge (terbaik + alumni) — jangan overlap, biarkan dua-duanya inline */
   table tr.terbaik-row.alumni-row{background:#fffbeb !important}
@@ -348,6 +302,12 @@
       </div>
       <div class="field">
         <label>&nbsp;</label>
+        <button class="btn-alumni" id="btn-alumni" type="button" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
+          🏆 Alumni Berprestasi <span class="cnt" id="btn-alumni-cnt">0</span>
+        </button>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
         <button class="btn ghost" id="btn-reset" style="width:100%">Reset Filter</button>
       </div>
     </div>
@@ -355,46 +315,6 @@
 
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
-
-  <!-- ALUMNI BERPRESTASI (penghargaan setelah diklat) -->
-  <div class="alumni-card" id="alumni-card">
-    <div class="alumni-head">
-      <div class="ttl">
-        <span class="cup">🏆</span>
-        <div>
-          <h3>Alumni Berprestasi</h3>
-          <div class="desc">Alumni yang meraih penghargaan <b>setelah</b> diklat — di luar predikat terbaik saat diklat</div>
-        </div>
-      </div>
-      <span class="info-pill"><b id="ap-total">0</b> alumni berprestasi</span>
-    </div>
-
-    <div class="alumni-stats" id="ap-stats"></div>
-
-    <div class="alumni-search">
-      <input id="ap-search" type="search" placeholder="Cari nama alumni atau prestasi…" />
-    </div>
-
-    <div class="alumni-wrap">
-      <table class="alumni-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nama Alumni</th>
-            <th>Prestasi / Penghargaan</th>
-            <th>Sumber Berita</th>
-            <th style="text-align:center">Tahun</th>
-            <th>Provinsi</th>
-          </tr>
-        </thead>
-        <tbody id="ap-body"></tbody>
-      </table>
-    </div>
-    <div class="alumni-foot">
-      Sumber: kolom <b>PRESTASI</b> &amp; <b>SUMBER BERITA</b> di sheet data utama. Setiap baris = satu alumni.
-      Klik baris untuk membuka karya alumni tersebut di tabel utama. Baris berbadge <span style="background:#ecfdf5;padding:0 6px;border-radius:4px;border:1px solid #a7f3d0"><b>🏆 PRESTASI</b></span> di tabel utama menandai alumni berprestasi.
-    </div>
-  </div>
 
   <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
@@ -511,6 +431,7 @@ let page = 1;
 let namaFocus = '';        // nama peserta yang dipilih (untuk label info saja)
 let idFocus = 0;           // id record yang dipilih dari "Peserta Terbaik" — filter tabel ke karya TEPAT itu
 let onlyTerbaikOn = false; // toggle "★ Peserta Terbaik" — filter tabel hanya ke karya terbaik
+let onlyAlumniOn = false;  // toggle "🏆 Alumni Berprestasi" — filter tabel hanya ke alumni berprestasi
 const PAGE_SIZE = 25;
 const charts = {};
 
@@ -618,8 +539,11 @@ function applyFilter(){
     if(bid && r.bidang_inovasi !== bid) return false;
     return true;
   });
-  // filtered: baseFiltered + filter toggle "Peserta Terbaik" (dipakai KPI/charts/map/tabel)
-  filtered = onlyTerbaikOn ? baseFiltered.filter(r => r.terbaik) : baseFiltered;
+  // filtered: baseFiltered + filter toggle "Peserta Terbaik" dan/atau "Alumni Berprestasi" (dipakai KPI/charts/map/tabel)
+  let f = baseFiltered;
+  if(onlyTerbaikOn) f = f.filter(r => r.terbaik);
+  if(onlyAlumniOn)  f = f.filter(r => r.prestasi);
+  filtered = f;
   page = 1;
   // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif (pakai baseFiltered, bukan filtered)
   const terbaikInFilter = baseFiltered.filter(r => r.terbaik).length;
@@ -627,10 +551,15 @@ function applyFilter(){
   if(cntEl) cntEl.textContent = terbaikInFilter.toLocaleString('id-ID');
   const btnTerbaik = document.getElementById('btn-terbaik');
   if(btnTerbaik) btnTerbaik.classList.toggle('active', onlyTerbaikOn);
+  // Update tombol "🏆 Alumni Berprestasi" — jumlah alumni dalam filter aktif (pakai baseFiltered)
+  const alumniInFilter = baseFiltered.filter(r => r.prestasi).length;
+  const cntAl = document.getElementById('btn-alumni-cnt');
+  if(cntAl) cntAl.textContent = alumniInFilter.toLocaleString('id-ID');
+  const btnAlumni = document.getElementById('btn-alumni');
+  if(btnAlumni) btnAlumni.classList.toggle('active', onlyAlumniOn);
   renderKPI();
   renderCharts();
   renderMap();
-  renderAlumniPrestasi();
   renderTable();
 }
 
@@ -776,79 +705,6 @@ function toTitleCase(s){
     if(w === 'i') return 'I';
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(' ');
-}
-
-// ━━━ ALUMNI BERPRESTASI (penghargaan setelah diklat, dari kolom PRESTASI/SUMBER BERITA) ━━━
-// Kartu showcase terpisah dari filter dashboard utama — tidak ikut filter search/provinsi.
-// Memiliki search lokal sendiri (cari nama/prestasi). Klik baris → filter tabel utama ke karya itu (via idFocus).
-let alumniSearch = '';
-function renderAlumniPrestasi(){
-  const stats = DATA.stats.alumni_prestasi;
-  if(!stats){ document.getElementById('alumni-card').style.display='none'; return; }
-
-  // Ambil record alumni dari DATA.records (bukan filtered) — showcase tetap penuh walau dashboard difilter
-  let list = DATA.records.filter(r => r.prestasi).map(r => ({
-    id:r.id, no_urut:r.no_urut, nama:r.nama, judul:r.judul, link:r.link,
-    prestasi:r.prestasi, sumber_berita:r.sumber_berita,
-    provinsi:r.provinsi, asal_instansi:r.asal_instansi, tahun:String(r.tahun||''),
-    kategori:r.kategori, terbaik:!!r.terbaik
-  }));
-  // Search lokal (nama atau prestasi)
-  const q = alumniSearch.trim().toLowerCase();
-  if(q){
-    list = list.filter(a => a.nama.toLowerCase().includes(q) || a.prestasi.toLowerCase().includes(q));
-  }
-  // urut: tahun desc (terbaru dulu), lalu nama asc
-  list.sort((a,b) => (b.tahun||'').localeCompare(a.tahun||'') || a.nama.localeCompare(b.nama));
-
-  // Header info pill + stats ringkas
-  document.getElementById('ap-total').textContent = list.length.toLocaleString('id-ID');
-  const totalAlumni = stats.total;
-  const katCnt = {};
-  list.forEach(a => { if(a.kategori) katCnt[a.kategori] = (katCnt[a.kategori]||0)+1; });
-  const thns = list.map(a=>a.tahun).filter(Boolean).sort();
-  document.getElementById('ap-stats').innerHTML = `
-    <span class="ap-pill">Ditampilkan: <b>${list.length.toLocaleString('id-ID')}</b> dari <b>${totalAlumni.toLocaleString('id-ID')}</b> alumni${q ? ` (cari: "${escapeHtml(alumniSearch)}")` : ''}</span>
-    <span class="ap-pill">Pemda: <b>${katCnt['Pemda']||0}</b> • K/L: <b>${katCnt['K/L']||0}</b></span>
-    <span class="ap-pill">Rentang tahun: <b>${thns[0]||'—'} – ${thns[thns.length-1]||'—'}</b></span>
-  `;
-
-  // Tabel
-  const tbody = document.getElementById('ap-body');
-  if(list.length === 0){
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada alumni berprestasi yang cocok.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map((a, i)=>{
-    const prestasiHtml = a.sumber_berita
-      ? `<a href="${escapeHtml(a.sumber_berita)}" target="_blank" rel="noopener">${escapeHtml(a.prestasi)}</a>`
-      : escapeHtml(a.prestasi);
-    const sumberHtml = a.sumber_berita
-      ? `<a href="${escapeHtml(a.sumber_berita)}" target="_blank" rel="noopener" title="${escapeHtml(a.sumber_berita)}">${escapeHtml(a.sumber_berita.length > 45 ? a.sumber_berita.slice(0,42)+'…' : a.sumber_berita)}</a>`
-      : '<span class="muted">—</span>';
-    const prov = (a.provinsi && a.provinsi !== '-') ? a.provinsi : '—';
-    return `<tr data-id="${a.id}" data-nama="${escapeHtml(a.nama)}">
-      <td class="ap-no">${i+1}</td>
-      <td class="ap-nama">${escapeHtml(a.nama)} <span class="ap-badge">PRESTASI</span></td>
-      <td class="ap-prestasi">${prestasiHtml}</td>
-      <td class="ap-meta">${sumberHtml}</td>
-      <td class="ap-meta" style="text-align:center">${escapeHtml(a.tahun || '—')}</td>
-      <td class="ap-meta">${escapeHtml(prov)}</td>
-    </tr>`;
-  }).join('');
-
-  // Klik baris → filter tabel utama ke karya TEPAT itu (pakai id record)
-  tbody.querySelectorAll('tr[data-id]').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      idFocus = parseInt(el.dataset.id, 10);
-      namaFocus = el.dataset.nama;
-      onlyTerbaikOn = false;  // pastikan tidak terkunci di filter terbaik
-      page = 1;
-      applyFilter();
-      toast(`Tabel difilter: karya ${el.dataset.nama} (alumni berprestasi)`);
-      document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  });
 }
 
 function renderKPI(){
@@ -1067,8 +923,19 @@ function renderTable(){
       const isAlumni = !!r.prestasi;
       const rowClasses = [isTerbaik && 'terbaik-row', isAlumni && 'alumni-row'].filter(Boolean).join(' ');
       const rowCls = rowClasses ? ` class="${rowClasses}"` : '';
+      // Badge PRESTASI: jika ada sumber_berita → jadi link (buka tab baru), tooltip = teks prestasi.
+      // Click link di-stop propagation supaya tidak trigger klik baris (filter idFocus).
+      let alumniBadge = '';
+      if(isAlumni){
+        const prestasiTip = escapeHtml(r.prestasi).replace(/"/g,'&quot;');
+        if(r.sumber_berita){
+          alumniBadge = ` <a href="${escapeHtml(r.sumber_berita)}" target="_blank" rel="noopener" class="ap-mini" title="${prestasiTip}" onclick="event.stopPropagation()">PRESTASI</a>`;
+        } else {
+          alumniBadge = ` <span class="ap-mini" title="${prestasiTip}">PRESTASI</span>`;
+        }
+      }
       const namaBadge = (isTerbaik ? ' <span class="tp-mini">TERBAIK</span>' : '')
-                      + (isAlumni ? ' <span class="ap-mini">PRESTASI</span>' : '');
+                      + alumniBadge;
       return `<tr${rowCls}>
         <td class="muted">${no}</td>
         <td class="nama">${escapeHtml(r.nama)}${namaBadge}</td>
@@ -1144,15 +1011,24 @@ document.getElementById('btn-terbaik').addEventListener('click', ()=>{
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
   onlyTerbaikOn = false;
+  onlyAlumniOn = false;
   namaFocus = ''; idFocus = 0;
   applyFilter();
   toast('Filter direset');
 });
 
-// Search lokal di kartu "Alumni Berprestasi" — hanya re-render kartu itu, tidak ganggu filter dashboard
-document.getElementById('ap-search').addEventListener('input', ()=>{
-  alumniSearch = document.getElementById('ap-search').value;
-  renderAlumniPrestasi();
+// Tombol "🏆 Alumni Berprestasi" — toggle filter tabel hanya ke alumni berprestasi + scroll ke tabel
+document.getElementById('btn-alumni').addEventListener('click', ()=>{
+  onlyAlumniOn = !onlyAlumniOn;
+  namaFocus = ''; idFocus = 0;
+  page = 1;
+  applyFilter();
+  if(onlyAlumniOn){
+    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
+    toast(`Menampilkan hanya alumni berprestasi (${filtered.length.toLocaleString('id-ID')} alumni)`);
+  } else {
+    toast('Menampilkan semua karya');
+  }
 });
 
 loadData();
