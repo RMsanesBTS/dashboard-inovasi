@@ -330,10 +330,10 @@
         <span class="trophy">★</span>
         <div>
           <h3>Peserta Terbaik</h3>
-          <div class="desc">Alumni yang karyanya ditandai <b>"Terbaik"</b> pada kolom PERINGKAT di data sumber Excel</div>
+          <div class="desc">Setiap baris = satu karya yang ditandai <b>"Terbaik"</b> pada kolom PERINGKAT di data sumber Excel</div>
         </div>
       </div>
-      <span class="info-pill"><b id="tp-total">0</b> peserta • <b id="tp-karya">0</b> karya</span>
+      <span class="info-pill"><b id="tp-total">0</b> karya terbaik</span>
     </div>
 
     <div class="tp-stats" id="tp-stats"></div>
@@ -345,9 +345,9 @@
             <th>#</th>
             <th>Nama Peserta</th>
             <th>Judul Karya Terbaik</th>
+            <th>Asal Instansi</th>
             <th style="text-align:center">Provinsi</th>
             <th style="text-align:center">Tahun</th>
-            <th style="text-align:center">Jml Karya Terbaik</th>
             <th>Kategori</th>
           </tr>
         </thead>
@@ -355,8 +355,7 @@
       </table>
     </div>
     <div class="tp-foot">
-      Penanda <b>"Terbaik"</b> diambil langsung dari kolom <b>PERINGKAT</b> pada file Excel sumber (109 peserta, 112 karya).
-      Baris dengan latar kuning di tabel utama di bawah juga menandai karya terbaik — aktifkan toggle <b>"Hanya Peserta Terbaik"</b> di tabel untuk memfilter. Klik baris di sini untuk memfilter tabel utama ke karya peserta tersebut.
+      Penanda <b>"Terbaik"</b> diambil langsung dari kolom <b>PERINGKAT</b> pada file Excel sumber — setiap baris di sini adalah satu karya (satu orang). Nama yang sama di tahun berbeda adalah orang yang berbeda. Baris dengan latar kuning di tabel utama di bawah juga menandai karya terbaik — aktifkan toggle <b>"Hanya Peserta Terbaik"</b> di tabel untuk memfilter. Klik baris di sini untuk memfilter tabel utama ke karya tersebut.
     </div>
   </div>
 
@@ -477,7 +476,8 @@
 let DATA = null;
 let filtered = [];
 let page = 1;
-let namaFocus = '';        // nama yang dipilih dari "Peserta Terbaik" — filter tabel saja
+let namaFocus = '';        // nama peserta yang dipilih (untuk label info saja)
+let idFocus = 0;           // id record yang dipilih dari "Peserta Terbaik" — filter tabel ke karya TEPAT itu
 const PAGE_SIZE = 25;
 const charts = {};
 
@@ -739,34 +739,15 @@ function toTitleCase(s){
 // ━━━ PESERTA TERBAIK (dari penanda Excel, bukan skor hitungan) ━━━
 // Sumber: kolom PERINGKAT = "Terbaik" pada Excel → record.terbaik === true di data.json
 function renderTopPeserta(){
-  // Peserta terbaik yang karyanya masuk filter aktif
+  // Setiap karya Terbaik ditampilkan sebagai baris sendiri — TIDAK ada agregasi per nama.
+  // Nama sama di tahun berbeda = orang berbeda (sesuai klarifikasi pengguna).
   const terbaikInFilter = filtered.filter(r => r.terbaik);
+  // urut: tahun asc (kronologis), lalu nama asc
+  const list = [...terbaikInFilter].sort((a,b)=>
+    String(a.tahun||'').localeCompare(String(b.tahun||'')) || a.nama.localeCompare(b.nama));
 
-  // Kelompokkan per nama untuk hitung jumlah karya terbaik + ambil 1 karya perwakilan
-  const byNama = new Map();
-  for(const r of terbaikInFilter){
-    if(!byNama.has(r.nama)){
-      byNama.set(r.nama, {
-        nama:r.nama, karya_terbaik:0,
-        provinsi:new Set(), tahun:new Set(), kategori:new Set(),
-        rep:null
-      });
-    }
-    const p = byNama.get(r.nama);
-    p.karya_terbaik++;
-    if(r.provinsi && r.provinsi !== '-') p.provinsi.add(r.provinsi);
-    if(r.tahun) p.tahun.add(String(r.tahun));
-    if(r.kategori) p.kategori.add(r.kategori);
-    // ambil karya perwakilan (karya terbaik pertama yang ada link-nya, kalau tidak ada ambil yg pertama)
-    if(!p.rep || (r.link && !p.rep.link)) p.rep = r;
-  }
-  // urut: jumlah karya terbaik desc, lalu nama asc
-  const list = [...byNama.values()].sort((a,b)=>
-    b.karya_terbaik - a.karya_terbaik || a.nama.localeCompare(b.nama));
-
-  // Header info pill + stats ringkas
+  // Header info pill
   document.getElementById('tp-total').textContent = list.length.toLocaleString('id-ID');
-  document.getElementById('tp-karya').textContent = terbaikInFilter.length.toLocaleString('id-ID');
 
   // stats: by kategori & by tahun (dari karya terbaik dalam filter)
   const katCnt = {}, thCnt = {};
@@ -775,49 +756,46 @@ function renderTopPeserta(){
     if(r.tahun) thCnt[r.tahun] = (thCnt[r.tahun]||0)+1;
   });
   const thSorted = Object.keys(thCnt).sort();
-  const tpStats = document.getElementById('tp-stats');
-  const totalTerbaik = DATA.stats.terbaik ? DATA.stats.terbaik.total_peserta_terbaik : 0;
-  tpStats.innerHTML = `
-    <span class="ms-pill">Ditampilkan: <b>${list.length.toLocaleString('id-ID')}</b> dari <b>${totalTerbaik.toLocaleString('id-ID')}</b> peserta terbaik (sesuai filter)</span>
+  const totalTerbaik = DATA.stats.terbaik ? DATA.stats.terbaik.total_karya_terbaik : 0;
+  document.getElementById('tp-stats').innerHTML = `
+    <span class="ms-pill">Ditampilkan: <b>${list.length.toLocaleString('id-ID')}</b> dari <b>${totalTerbaik.toLocaleString('id-ID')}</b> karya terbaik (sesuai filter)</span>
     <span class="ms-pill">Pemda: <b>${katCnt['Pemda']||0}</b> • K/L: <b>${katCnt['K/L']||0}</b></span>
     <span class="ms-pill">Rentang tahun: <b>${thSorted[0]||'—'} – ${thSorted[thSorted.length-1]||'—'}</b></span>
   `;
 
-  // Tabel
+  // Tabel — satu baris per karya
   const tbody = document.getElementById('tp-body');
   if(list.length === 0){
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada peserta terbaik pada filter ini.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada karya terbaik pada filter ini.</td></tr>`;
     return;
   }
-  tbody.innerHTML = list.map((p, i)=>{
-    const rep = p.rep;
-    const judulHtml = rep.link
-      ? `<a href="${escapeHtml(rep.link)}" target="_blank" rel="noopener">${escapeHtml(rep.judul)}</a>`
-      : escapeHtml(rep.judul);
-    const prov = [...p.provinsi].join(', ') || '—';
-    const thn = [...p.tahun].sort().join(', ') || '—';
-    const kat = [...p.kategori].join(', ') || '—';
-    const jml = p.karya_terbaik > 1
-      ? `<span class="tg" style="background:#fef3c7;border-color:#fde68a;color:#92400e">${p.karya_terbaik} karya</span>`
-      : '<span class="muted">1</span>';
-    return `<tr data-nama="${escapeHtml(p.nama)}">
+  tbody.innerHTML = list.map((r, i)=>{
+    const judulHtml = r.link
+      ? `<a href="${escapeHtml(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.judul)}</a>`
+      : escapeHtml(r.judul);
+    const instansi = r.asal_instansi || '—';
+    const prov = (r.provinsi && r.provinsi !== '-') ? r.provinsi : '—';
+    const thn = r.tahun || '—';
+    const kat = r.kategori || '—';
+    return `<tr data-id="${r.id}" data-nama="${escapeHtml(r.nama)}">
       <td class="tp-no">${i+1}</td>
-      <td class="tp-nama">${escapeHtml(p.nama)} <span class="tp-badge">TERBAIK</span></td>
+      <td class="tp-nama">${escapeHtml(r.nama)} <span class="tp-badge">TERBAIK</span></td>
       <td class="tp-judul">${judulHtml}</td>
+      <td class="tp-meta">${escapeHtml(instansi)}</td>
       <td class="tp-meta">${escapeHtml(prov)}</td>
       <td class="tp-meta" style="text-align:center">${escapeHtml(thn)}</td>
-      <td class="tp-num">${jml}</td>
       <td class="tp-meta">${escapeHtml(kat)}</td>
     </tr>`;
   }).join('');
 
-  // Klik baris → filter tabel utama ke karya peserta itu
-  tbody.querySelectorAll('tr[data-nama]').forEach(el=>{
+  // Klik baris → filter tabel utama ke karya TEPAT itu (pakai id record, bukan nama)
+  tbody.querySelectorAll('tr[data-id]').forEach(el=>{
     el.addEventListener('click', ()=>{
-      namaFocus = el.dataset.nama;
+      idFocus = parseInt(el.dataset.id, 10);
+      namaFocus = el.dataset.nama;   // untuk label info
       page = 1;
       renderTable();
-      toast(`Tabel difilter: karya ${el.dataset.nama}`);
+      toast(`Tabel difilter: karya ${el.dataset.nama} (${el.dataset.id})`);
       document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
     });
   });
@@ -841,7 +819,7 @@ function renderKPI(){
 
   const kpis = [
     {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
-    {cls:'k5', label:'★ Peserta Terbaik', value:terbaikPeserta.toLocaleString('id-ID'), sub:`${terbaikKarya.toLocaleString('id-ID')} karya • dari ${totalTerbaik.toLocaleString('id-ID')} total`},
+    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
     {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
     {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
     {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
@@ -1010,7 +988,7 @@ function renderTable(){
   const onlyTerbaik = document.getElementById('f-only-terbaik')?.checked;
   let tblRecords = filtered;
   if(onlyTerbaik) tblRecords = tblRecords.filter(r => r.terbaik);
-  if(namaFocus)   tblRecords = tblRecords.filter(r => r.nama === namaFocus);
+  if(idFocus)      tblRecords = tblRecords.filter(r => r.id === idFocus);
   const total = tblRecords.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if(page > pages) page = pages;
@@ -1047,17 +1025,17 @@ function renderTable(){
   }
 
   document.getElementById('tbl-info').innerHTML =
-    namaFocus
-      ? `<span class="badge prior" style="margin-right:8px">Tabel terfilter ke: ${escapeHtml(namaFocus)}</span>
-         <a href="#" id="clear-namafocus" class="link">Tampilkan semua karya</a> •
+    idFocus
+      ? `<span class="badge prior" style="margin-right:8px;background:linear-gradient(135deg,#f59e0b,#fbbf24)">★ Karya terpilih: ${escapeHtml(namaFocus)} (${idFocus})</span>
+         <a href="#" id="clear-idfocus" class="link">Tampilkan semua karya</a> •
          ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`
       : (onlyTerbaik
           ? `<span class="badge prior" style="margin-right:8px;background:linear-gradient(135deg,#f59e0b,#fbbf24)">★ Hanya Peserta Terbaik</span>
              ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`
           : `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`);
-  if(namaFocus){
-    const cl = document.getElementById('clear-namafocus');
-    if(cl) cl.onclick = (e)=>{ e.preventDefault(); namaFocus=''; renderTable(); };
+  if(idFocus){
+    const cl = document.getElementById('clear-idfocus');
+    if(cl) cl.onclick = (e)=>{ e.preventDefault(); idFocus=0; namaFocus=''; renderTable(); };
   }
 
   const pag = document.getElementById('pagination');
@@ -1087,21 +1065,21 @@ function escapeHtml(s){
   const el = document.getElementById(id);
   const ev = id === 'f-search' ? 'input' : 'change';
   el.addEventListener(ev, ()=>{
-    namaFocus = '';  // ganti filter utama → hapus fokus nama peserta
+    namaFocus = ''; idFocus = 0;  // ganti filter utama → hapus fokus karya terpilih
     if(id==='f-search'){ clearTimeout(window._st); window._st = setTimeout(applyFilter, 250); }
     else applyFilter();
   });
 });
 // Toggle "Hanya Peserta Terbaik" — hanya re-render tabel (bukan seluruh dashboard)
 document.getElementById('f-only-terbaik').addEventListener('change', ()=>{
-  namaFocus = '';
+  namaFocus = ''; idFocus = 0;
   page = 1;
   renderTable();
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-only-terbaik').checked = false;
-  namaFocus = '';
+  namaFocus = ''; idFocus = 0;
   applyFilter();
   toast('Filter direset');
 });
