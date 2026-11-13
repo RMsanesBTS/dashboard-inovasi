@@ -76,89 +76,91 @@
   .kpi.k2::before{background:var(--accent2)}
   .kpi.k3::before{background:var(--accent3)}
   .kpi.k4::before{background:var(--primary)}
+  .kpi.k5::before{background:linear-gradient(180deg,#f59e0b,#fbbf24)}
+  .kpi.k5{background:linear-gradient(180deg,#ffffff 0%,#fffbeb 100%);border-color:#fde68a}
+  .kpi.k5 .value{color:#b45309}
   .kpi .label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
 
-  /* ---------- PESERTA TERBAIK ---------- */
+  /* ---------- PESERTA TERBAIK (penanda dari Excel) ---------- */
   .toppeserta-card{
-    background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
-    border:1px solid var(--border);border-radius:16px;padding:20px 22px;
-    box-shadow:var(--shadow);margin-bottom:20px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#ffffff 0%,#fffbeb 100%);
+    border:1px solid #fde68a;border-radius:16px;padding:20px 22px;
+    box-shadow:var(--shadow-lg);margin-bottom:20px;position:relative;overflow:hidden;
   }
   .toppeserta-card::before{
-    content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
-    background:radial-gradient(circle, rgba(245,158,11,.12) 0%, rgba(245,158,11,0) 70%);
+    content:"";position:absolute;right:-50px;top:-50px;width:200px;height:200px;
+    background:radial-gradient(circle, rgba(245,158,11,.18) 0%, rgba(245,158,11,0) 70%);
     pointer-events:none;
   }
   .toppeserta-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;position:relative}
-  .toppeserta-head .ttl{display:flex;align-items:center;gap:10px}
+  .toppeserta-head .ttl{display:flex;align-items:center;gap:12px}
   .toppeserta-head .ttl .trophy{
-    width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;font-size:18px;font-weight:800;
-    box-shadow:0 4px 10px rgba(245,158,11,.35);
+    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;font-size:20px;font-weight:800;
+    box-shadow:0 4px 12px rgba(245,158,11,.4);
   }
-  .toppeserta-head h3{margin:0;font-size:15.5px;font-weight:800;color:var(--text)}
-  .toppeserta-head .desc{margin:1px 0 0;font-size:11.5px;color:var(--muted)}
+  .toppeserta-head h3{margin:0;font-size:16px;font-weight:800;color:var(--text)}
+  .toppeserta-head .desc{margin:2px 0 0;font-size:12px;color:var(--muted)}
   .toppeserta-head .info-pill{
-    background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:999px;
-    padding:5px 12px;font-size:11.5px;font-weight:600;
+    background:#fff;border:1px solid #fde68a;color:#92400e;border-radius:999px;
+    padding:6px 14px;font-size:12px;font-weight:600;
   }
-  .toppeserta-head .info-pill b{color:#78350f}
+  .toppeserta-head .info-pill b{color:#78350f;font-size:13px}
 
-  .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end;margin-bottom:14px}
-  @media(max-width:760px){.podium{grid-template-columns:1fr;gap:10px}}
-  .podium-cell{
-    background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px;
-    position:relative;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;cursor:pointer;
-    transition:transform .15s, box-shadow .15s;
+  .tp-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px}
+  .tp-stats .ms-pill{
+    background:#fff;border:1px solid #fde68a;border-radius:999px;
+    padding:5px 12px;font-size:11.5px;color:#78350f;
   }
-  .podium-cell:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-  .podium-cell.p1{border-color:#f59e0b;background:linear-gradient(180deg,#fffbeb 0%,#ffffff 60%)}
-  .podium-cell.p2{border-color:#94a3b8;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 60%)}
-  .podium-cell.p3{border-color:#b45309;background:linear-gradient(180deg,#fef3c7 0%,#ffffff 60%)}
-  .podium-rank{
-    position:absolute;top:-12px;left:14px;width:32px;height:32px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;
-    box-shadow:0 3px 8px rgba(15,23,42,.18);
-  }
-  .p1 .podium-rank{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
-  .p2 .podium-rank{background:linear-gradient(135deg,#64748b,#94a3b8)}
-  .p3 .podium-rank{background:linear-gradient(135deg,#b45309,#d97706)}
-  .podium-name{font-size:15px;font-weight:800;color:var(--text);line-height:1.2;margin-top:6px}
-  .podium-meta{font-size:11px;color:var(--muted)}
-  .podium-score{display:flex;align-items:baseline;gap:6px;margin-top:2px}
-  .podium-score .num{font-size:24px;font-weight:800;color:var(--primary-dark);line-height:1}
-  .podium-score .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-  .podium-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
-  .podium-tags .tg{
-    background:#eff6ff;border:1px solid #dbeafe;color:#1e3a8a;border-radius:6px;
-    padding:2px 7px;font-size:10.5px;font-weight:600;
-  }
-  .podium-tags .tg.prior{background:#ede9fe;border-color:#ddd6fe;color:#5b21b6}
-  .podium-empty{grid-column:1/-1;text-align:center;padding:24px;color:var(--muted);font-size:13px}
+  .tp-stats .ms-pill b{color:#92400e;font-weight:800}
 
-  .lb-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:340px;margin-top:6px}
-  .lb-table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
-  .lb-table th{
-    background:var(--primary-dark);color:#fff;font-weight:600;font-size:11px;text-transform:uppercase;
-    letter-spacing:.4px;padding:8px 10px;text-align:left;position:sticky;top:0;z-index:2;
+  .tp-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:420px;background:#fff}
+  .tp-table{width:100%;border-collapse:collapse;font-size:12.5px}
+  .tp-table th{
+    background:linear-gradient(135deg,#b45309,#f59e0b);color:#fff;font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.4px;padding:9px 11px;text-align:left;position:sticky;top:0;z-index:2;
   }
-  .lb-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
-  .lb-table tbody tr:nth-child(even){background:#f8fafc}
-  .lb-table tbody tr{cursor:pointer}
-  .lb-table tbody tr:hover{background:#eff6ff}
-  .lb-table td.lb-rank{font-weight:800;color:var(--primary-dark);width:46px;text-align:center}
-  .lb-table td.lb-nama{font-weight:700;color:var(--text);min-width:150px}
-  .lb-table td.lb-score{font-weight:800;color:var(--primary-dark);width:64px;text-align:right}
-  .lb-table td.lb-num{text-align:center;width:70px;color:var(--text)}
-  .lb-table td.lb-detail{font-size:11px;color:var(--muted)}
-  .lb-table td.lb-detail .tg{
+  .tp-table td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top}
+  .tp-table tbody tr:nth-child(even){background:#fffbeb}
+  .tp-table tbody tr{cursor:pointer;transition:background .12s}
+  .tp-table tbody tr:hover{background:#fef3c7}
+  .tp-table td.tp-no{font-weight:700;color:#92400e;width:42px;text-align:center}
+  .tp-table td.tp-nama{font-weight:700;color:var(--text);min-width:160px}
+  .tp-table td.tp-nama .tp-badge{
+    display:inline-block;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;
+    border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;
+    letter-spacing:.3px;
+  }
+  .tp-table td.tp-judul{max-width:340px;color:var(--text)}
+  .tp-table td.tp-judul a{color:var(--primary);text-decoration:none;font-weight:600}
+  .tp-table td.tp-judul a:hover{text-decoration:underline}
+  .tp-table td.tp-meta{font-size:11px;color:var(--muted)}
+  .tp-table td.tp-meta .tg{
     display:inline-block;background:#eff6ff;border:1px solid #dbeafe;color:#1e3a8a;
     border-radius:5px;padding:1px 6px;margin:1px 3px 1px 0;font-size:10.5px;font-weight:600;
   }
-  .lb-table td.lb-detail .tg.prior{background:#ede9fe;border-color:#ddd6fe;color:#5b21b6}
-  .lb-foot{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+  .tp-table td.tp-num{text-align:center;width:70px;color:var(--text);font-weight:600}
+  .tp-foot{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+
+  /* ---------- Penanda baris Terbaik di tabel utama ---------- */
+  table tr.terbaik-row{background:#fffbeb !important}
+  table tr.terbaik-row:hover{background:#fef3c7 !important}
+  table tr.terbaik-row td.nama{color:#92400e}
+  table tr.terbaik-row td.nama .tp-mini{
+    display:inline-block;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;
+    border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;
+    letter-spacing:.3px;white-space:nowrap;
+  }
+  table tr.terbaik-row td.nama .tp-mini::before{content:"★ "}
+  .tp-toggle-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .tp-toggle{
+    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);
+    background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;user-select:none;
+  }
+  .tp-toggle input{margin:0;cursor:pointer;width:15px;height:15px;accent-color:#f59e0b}
+  .tp-toggle:hover{background:#fffbeb}
 
   /* ---------- CHART GRID ---------- */
   .grid{display:grid;gap:18px;margin-bottom:20px}
@@ -321,42 +323,40 @@
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
 
-  <!-- PESERTA TERBAIK -->
+  <!-- PESERTA TERBAIK (penanda dari Excel) -->
   <div class="toppeserta-card" id="toppeserta-card">
     <div class="toppeserta-head">
-      <div>
-        <div class="ttl">
-          <span class="trophy">★</span>
-          <div>
-            <h3>Peserta Terbaik</h3>
-            <div class="desc">Peringkat alumni berdasarkan jumlah &amp; keragaman karya inovasi</div>
-          </div>
+      <div class="ttl">
+        <span class="trophy">★</span>
+        <div>
+          <h3>Peserta Terbaik</h3>
+          <div class="desc">Alumni yang karyanya ditandai <b>"Terbaik"</b> pada kolom PERINGKAT di data sumber Excel</div>
         </div>
       </div>
-      <span class="info-pill">Metode: skor = <b>10</b>/karya + <b>8</b>/Program Prioritas + <b>3</b>/bidang + <b>2</b>/provinsi</span>
+      <span class="info-pill"><b id="tp-total">0</b> peserta • <b id="tp-karya">0</b> karya</span>
     </div>
 
-    <div class="podium" id="podium"></div>
+    <div class="tp-stats" id="tp-stats"></div>
 
-    <div class="lb-wrap">
-      <table class="lb-table">
+    <div class="tp-wrap">
+      <table class="tp-table">
         <thead>
           <tr>
             <th>#</th>
             <th>Nama Peserta</th>
-            <th style="text-align:center">Skor</th>
-            <th style="text-align:center">Karya</th>
-            <th style="text-align:center">Prioritas</th>
-            <th style="text-align:center">Bidang</th>
+            <th>Judul Karya Terbaik</th>
             <th style="text-align:center">Provinsi</th>
-            <th>Program Prioritas &amp; Tahun</th>
+            <th style="text-align:center">Tahun</th>
+            <th style="text-align:center">Jml Karya Terbaik</th>
+            <th>Kategori</th>
           </tr>
         </thead>
-        <tbody id="lb-body"></tbody>
+        <tbody id="tp-body"></tbody>
       </table>
     </div>
-    <div class="lb-foot">
-      Klik nama peserta pada podium atau tabel untuk memfilter karyanya di tabel utama di bawah. Skor bersifat indikatif — menilai <b>jumlah</b> dan <b>keragaman</b> kontribusi, bukan mutu substantif karya.
+    <div class="tp-foot">
+      Penanda <b>"Terbaik"</b> diambil langsung dari kolom <b>PERINGKAT</b> pada file Excel sumber (109 peserta, 112 karya).
+      Baris dengan latar kuning di tabel utama di bawah juga menandai karya terbaik — aktifkan toggle <b>"Hanya Peserta Terbaik"</b> di tabel untuk memfilter. Klik baris di sini untuk memfilter tabel utama ke karya peserta tersebut.
     </div>
   </div>
 
@@ -432,8 +432,16 @@
 
   <!-- TABLE -->
   <div class="card" style="margin-top:20px">
-    <h3>Daftar Peserta &amp; Karya</h3>
-    <div class="desc">Klik judul pada kolom "Judul Karya" untuk membuka dokumen asli. Gunakan filter di atas untuk menyaring data.</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div>
+        <h3>Daftar Peserta &amp; Karya</h3>
+        <div class="desc">Klik judul pada kolom "Judul Karya" untuk membuka dokumen asli. Baris berlatar <span style="background:#fffbeb;padding:0 6px;border-radius:4px;border:1px solid #fde68a"><b>kuning</b> ★</span> = karya terbaik.</div>
+      </div>
+      <label class="tp-toggle">
+        <input type="checkbox" id="f-only-terbaik" />
+        <span>★ Hanya Peserta Terbaik</span>
+      </label>
+    </div>
     <div class="table-wrap">
       <table id="tbl">
         <thead>
@@ -728,106 +736,90 @@ function toTitleCase(s){
   }).join(' ');
 }
 
-// ━━━ PESERTA TERBAIK ━━━
-// Skor = 10/karya + 8/Program Prioritas unik + 3/bidang inovasi unik + 2/provinsi unik + 1/tahun unik
-// Dihitung dari data terfilter, jadi selalu konsisten dengan filter aktif (provinsi, tahun, bidang, dll.)
-const PRIORITAS_LABEL = (s) => (s && s !== 'Tidak Ada') ? s : '';
+// ━━━ PESERTA TERBAIK (dari penanda Excel, bukan skor hitungan) ━━━
+// Sumber: kolom PERINGKAT = "Terbaik" pada Excel → record.terbaik === true di data.json
+function renderTopPeserta(){
+  // Peserta terbaik yang karyanya masuk filter aktif
+  const terbaikInFilter = filtered.filter(r => r.terbaik);
 
-function scorePeserta(records){
-  // kelompokkan record per nama
-  const m = new Map();
-  for(const r of records){
-    const k = r.nama;
-    if(!m.has(k)){
-      m.set(k, {
-        nama:k, karya:0,
-        prioritas:new Set(), bidang:new Set(), provinsi:new Set(), tahun:new Set(),
-        recs:[]
+  // Kelompokkan per nama untuk hitung jumlah karya terbaik + ambil 1 karya perwakilan
+  const byNama = new Map();
+  for(const r of terbaikInFilter){
+    if(!byNama.has(r.nama)){
+      byNama.set(r.nama, {
+        nama:r.nama, karya_terbaik:0,
+        provinsi:new Set(), tahun:new Set(), kategori:new Set(),
+        rep:null
       });
     }
-    const p = m.get(k);
-    p.karya++;
-    const pr = PRIORITAS_LABEL(r.prioritas_singkat);
-    if(pr) p.prioritas.add(pr);
-    if(r.bidang_inovasi && r.bidang_inovasi !== '-') p.bidang.add(r.bidang_inovasi);
+    const p = byNama.get(r.nama);
+    p.karya_terbaik++;
     if(r.provinsi && r.provinsi !== '-') p.provinsi.add(r.provinsi);
     if(r.tahun) p.tahun.add(String(r.tahun));
-    p.recs.push(r);
+    if(r.kategori) p.kategori.add(r.kategori);
+    // ambil karya perwakilan (karya terbaik pertama yang ada link-nya, kalau tidak ada ambil yg pertama)
+    if(!p.rep || (r.link && !p.rep.link)) p.rep = r;
   }
-  const arr = [];
-  for(const p of m.values()){
-    const skor = p.karya*10 + p.prioritas.size*8 + p.bidang.size*3 + p.provinsi.size*2 + p.tahun.size*1;
-    arr.push({...p, skor});
-  }
-  // urut: skor desc, karya desc, prioritas desc, nama asc
-  arr.sort((a,b)=> b.skor-a.skor || b.karya-a.karya || b.prioritas.size-a.prioritas.size || a.nama.localeCompare(b.nama));
-  return arr;
-}
+  // urut: jumlah karya terbaik desc, lalu nama asc
+  const list = [...byNama.values()].sort((a,b)=>
+    b.karya_terbaik - a.karya_terbaik || a.nama.localeCompare(b.nama));
 
-function renderTopPeserta(){
-  const scored = scorePeserta(filtered);
-  const podium = document.getElementById('podium');
-  const lbBody = document.getElementById('lb-body');
+  // Header info pill + stats ringkas
+  document.getElementById('tp-total').textContent = list.length.toLocaleString('id-ID');
+  document.getElementById('tp-karya').textContent = terbaikInFilter.length.toLocaleString('id-ID');
 
-  if(scored.length === 0){
-    podium.innerHTML = '<div class="podium-empty">Tidak ada peserta pada filter ini.</div>';
-    lbBody.innerHTML = '<tr><td colspan="8" class="podium-empty">—</td></tr>';
+  // stats: by kategori & by tahun (dari karya terbaik dalam filter)
+  const katCnt = {}, thCnt = {};
+  terbaikInFilter.forEach(r=>{
+    if(r.kategori) katCnt[r.kategori] = (katCnt[r.kategori]||0)+1;
+    if(r.tahun) thCnt[r.tahun] = (thCnt[r.tahun]||0)+1;
+  });
+  const thSorted = Object.keys(thCnt).sort();
+  const tpStats = document.getElementById('tp-stats');
+  const totalTerbaik = DATA.stats.terbaik ? DATA.stats.terbaik.total_peserta_terbaik : 0;
+  tpStats.innerHTML = `
+    <span class="ms-pill">Ditampilkan: <b>${list.length.toLocaleString('id-ID')}</b> dari <b>${totalTerbaik.toLocaleString('id-ID')}</b> peserta terbaik (sesuai filter)</span>
+    <span class="ms-pill">Pemda: <b>${katCnt['Pemda']||0}</b> • K/L: <b>${katCnt['K/L']||0}</b></span>
+    <span class="ms-pill">Rentang tahun: <b>${thSorted[0]||'—'} – ${thSorted[thSorted.length-1]||'—'}</b></span>
+  `;
+
+  // Tabel
+  const tbody = document.getElementById('tp-body');
+  if(list.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada peserta terbaik pada filter ini.</td></tr>`;
     return;
   }
-
-  // PODIUM (top 3) — tampil urut 2,1,3 agar juara 1 di tengah
-  const top3 = scored.slice(0,3);
-  const order = [];
-  if(top3[1]) order.push({p:top3[1], cls:'p2', rank:2});
-  if(top3[0]) order.push({p:top3[0], cls:'p1', rank:1});
-  if(top3[2]) order.push({p:top3[2], cls:'p3', rank:3});
-
-  podium.innerHTML = order.map(({p,cls,rank})=>{
-    const tags = [...p.prioritas].slice(0,4).map(s=>`<span class="tg prior">${escapeHtml(s)}</span>`).join('')
-               + [...p.bidang].slice(0,2).map(s=>`<span class="tg">${escapeHtml(s)}</span>`).join('');
-    return `<div class="podium-cell ${cls}" data-nama="${escapeHtml(p.nama)}">
-      <div class="podium-rank">${rank}</div>
-      <div class="podium-name">${escapeHtml(p.nama)}</div>
-      <div class="podium-meta">${p.provinsi.size ? escapeHtml([...p.provinsi].join(', ')) : '—'} • ${p.tahun.size ? [...p.tahun].sort().join(', ') : '—'}</div>
-      <div class="podium-score"><span class="num">${p.skor}</span><span class="lbl">skor</span></div>
-      <div class="podium-meta">${p.karya} karya • ${p.prioritas.size} prioritas • ${p.bidang.size} bidang</div>
-      <div class="podium-tags">${tags || '<span class="podium-meta">—</span>'}</div>
-    </div>`;
-  }).join('');
-
-  // LEADERBOARD TABLE (top 15)
-  const top = scored.slice(0,15);
-  lbBody.innerHTML = top.map((p,i)=>{
-    const rank = i+1;
-    const priTags = [...p.prioritas].map(s=>`<span class="tg prior">${escapeHtml(s)}</span>`).join('')
-                 || '<span class="muted">—</span>';
-    const thn = [...p.tahun].sort().join(', ');
+  tbody.innerHTML = list.map((p, i)=>{
+    const rep = p.rep;
+    const judulHtml = rep.link
+      ? `<a href="${escapeHtml(rep.link)}" target="_blank" rel="noopener">${escapeHtml(rep.judul)}</a>`
+      : escapeHtml(rep.judul);
+    const prov = [...p.provinsi].join(', ') || '—';
+    const thn = [...p.tahun].sort().join(', ') || '—';
+    const kat = [...p.kategori].join(', ') || '—';
+    const jml = p.karya_terbaik > 1
+      ? `<span class="tg" style="background:#fef3c7;border-color:#fde68a;color:#92400e">${p.karya_terbaik} karya</span>`
+      : '<span class="muted">1</span>';
     return `<tr data-nama="${escapeHtml(p.nama)}">
-      <td class="lb-rank">${rank}</td>
-      <td class="lb-nama">${escapeHtml(p.nama)}</td>
-      <td class="lb-score">${p.skor}</td>
-      <td class="lb-num">${p.karya}</td>
-      <td class="lb-num">${p.prioritas.size}</td>
-      <td class="lb-num">${p.bidang.size}</td>
-      <td class="lb-num">${p.provinsi.size}</td>
-      <td class="lb-detail">${priTags} <span style="display:block;margin-top:2px">Tahun: ${escapeHtml(thn) || '—'}</span></td>
+      <td class="tp-no">${i+1}</td>
+      <td class="tp-nama">${escapeHtml(p.nama)} <span class="tp-badge">TERBAIK</span></td>
+      <td class="tp-judul">${judulHtml}</td>
+      <td class="tp-meta">${escapeHtml(prov)}</td>
+      <td class="tp-meta" style="text-align:center">${escapeHtml(thn)}</td>
+      <td class="tp-num">${jml}</td>
+      <td class="tp-meta">${escapeHtml(kat)}</td>
     </tr>`;
   }).join('');
 
-  // Klik peserta → filter tabel utama ke karya peserta tersebut (podium tetap utuh)
-  const onPick = (nama)=>{
-    if(!nama) return;
-    namaFocus = nama;
-    page = 1;
-    renderTable();
-    toast(`Tabel difilter: karya ${nama}`);
-    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
-  };
-  podium.querySelectorAll('[data-nama]').forEach(el=>{
-    el.addEventListener('click', ()=> onPick(el.dataset.nama));
-  });
-  lbBody.querySelectorAll('tr[data-nama]').forEach(el=>{
-    el.addEventListener('click', ()=> onPick(el.dataset.nama));
+  // Klik baris → filter tabel utama ke karya peserta itu
+  tbody.querySelectorAll('tr[data-nama]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      namaFocus = el.dataset.nama;
+      page = 1;
+      renderTable();
+      toast(`Tabel difilter: karya ${el.dataset.nama}`);
+      document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
+    });
   });
 }
 
@@ -838,6 +830,9 @@ function renderKPI(){
   const pemda = filtered.filter(r=>r.kategori === 'Pemda').length;
   const kl = filtered.filter(r=>r.kategori === 'K/L').length;
   const priorSet = new Set(filtered.map(r=>r.prioritas_singkat).filter(p=>p && p !== 'Tidak Ada'));
+  const terbaikKarya = filtered.filter(r=>r.terbaik).length;
+  const terbaikPeserta = new Set(filtered.filter(r=>r.terbaik).map(r=>r.nama)).size;
+  const totalTerbaik = DATA.stats.terbaik ? DATA.stats.terbaik.total_peserta_terbaik : 0;
 
   // Instansi unik (case-insensitive) dari data terfilter
   const instSetPemda = new Set(filtered.filter(r=>r.kategori==='Pemda').map(r=>(r.asal_instansi||'').trim().toLowerCase()).filter(s=>s && s!=='-'));
@@ -846,6 +841,7 @@ function renderKPI(){
 
   const kpis = [
     {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
+    {cls:'k5', label:'★ Peserta Terbaik', value:terbaikPeserta.toLocaleString('id-ID'), sub:`${terbaikKarya.toLocaleString('id-ID')} karya • dari ${totalTerbaik.toLocaleString('id-ID')} total`},
     {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
     {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
     {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
@@ -1011,9 +1007,10 @@ function chartOpts(o={}){
 
 function renderTable(){
   const tbody = document.getElementById('tbody');
-  const tblRecords = namaFocus
-    ? filtered.filter(r => r.nama === namaFocus)
-    : filtered;
+  const onlyTerbaik = document.getElementById('f-only-terbaik')?.checked;
+  let tblRecords = filtered;
+  if(onlyTerbaik) tblRecords = tblRecords.filter(r => r.terbaik);
+  if(namaFocus)   tblRecords = tblRecords.filter(r => r.nama === namaFocus);
   const total = tblRecords.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if(page > pages) page = pages;
@@ -1033,9 +1030,12 @@ function renderTable(){
       const priorHtml = r.prioritas_singkat && r.prioritas_singkat !== 'Tidak Ada'
         ? `<span class="badge prior" title="${escapeHtml(r.prioritas_nama||'')}">${escapeHtml(r.prioritas_singkat)}</span>`
         : '<span class="muted">—</span>';
-      return `<tr>
+      const isTerbaik = !!r.terbaik;
+      const rowCls = isTerbaik ? ' class="terbaik-row"' : '';
+      const namaBadge = isTerbaik ? ' <span class="tp-mini">TERBAIK</span>' : '';
+      return `<tr${rowCls}>
         <td class="muted">${no}</td>
-        <td class="nama">${escapeHtml(r.nama)}</td>
+        <td class="nama">${escapeHtml(r.nama)}${namaBadge}</td>
         <td class="judul">${judulHtml}<small>${escapeHtml(r.jenis_diklat||'')}</small></td>
         <td class="muted">${escapeHtml(daerah)}</td>
         <td>${r.kategori ? `<span class="badge ${katCls}">${r.kategori}</span>` : '<span class="muted">—</span>'}</td>
@@ -1051,7 +1051,10 @@ function renderTable(){
       ? `<span class="badge prior" style="margin-right:8px">Tabel terfilter ke: ${escapeHtml(namaFocus)}</span>
          <a href="#" id="clear-namafocus" class="link">Tampilkan semua karya</a> •
          ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`
-      : `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`;
+      : (onlyTerbaik
+          ? `<span class="badge prior" style="margin-right:8px;background:linear-gradient(135deg,#f59e0b,#fbbf24)">★ Hanya Peserta Terbaik</span>
+             ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`
+          : `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`);
   if(namaFocus){
     const cl = document.getElementById('clear-namafocus');
     if(cl) cl.onclick = (e)=>{ e.preventDefault(); namaFocus=''; renderTable(); };
@@ -1089,8 +1092,15 @@ function escapeHtml(s){
     else applyFilter();
   });
 });
+// Toggle "Hanya Peserta Terbaik" — hanya re-render tabel (bukan seluruh dashboard)
+document.getElementById('f-only-terbaik').addEventListener('change', ()=>{
+  namaFocus = '';
+  page = 1;
+  renderTable();
+});
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-only-terbaik').checked = false;
   namaFocus = '';
   applyFilter();
   toast('Filter direset');
