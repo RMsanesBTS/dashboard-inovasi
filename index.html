@@ -83,67 +83,6 @@
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
 
-  /* ---------- PESERTA TERBAIK (penanda dari Excel) ---------- */
-  .toppeserta-card{
-    background:linear-gradient(180deg,#ffffff 0%,#fffbeb 100%);
-    border:1px solid #fde68a;border-radius:16px;padding:20px 22px;
-    box-shadow:var(--shadow-lg);margin-bottom:20px;position:relative;overflow:hidden;
-  }
-  .toppeserta-card::before{
-    content:"";position:absolute;right:-50px;top:-50px;width:200px;height:200px;
-    background:radial-gradient(circle, rgba(245,158,11,.18) 0%, rgba(245,158,11,0) 70%);
-    pointer-events:none;
-  }
-  .toppeserta-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;position:relative}
-  .toppeserta-head .ttl{display:flex;align-items:center;gap:12px}
-  .toppeserta-head .ttl .trophy{
-    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;font-size:20px;font-weight:800;
-    box-shadow:0 4px 12px rgba(245,158,11,.4);
-  }
-  .toppeserta-head h3{margin:0;font-size:16px;font-weight:800;color:var(--text)}
-  .toppeserta-head .desc{margin:2px 0 0;font-size:12px;color:var(--muted)}
-  .toppeserta-head .info-pill{
-    background:#fff;border:1px solid #fde68a;color:#92400e;border-radius:999px;
-    padding:6px 14px;font-size:12px;font-weight:600;
-  }
-  .toppeserta-head .info-pill b{color:#78350f;font-size:13px}
-
-  .tp-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px}
-  .tp-stats .ms-pill{
-    background:#fff;border:1px solid #fde68a;border-radius:999px;
-    padding:5px 12px;font-size:11.5px;color:#78350f;
-  }
-  .tp-stats .ms-pill b{color:#92400e;font-weight:800}
-
-  .tp-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:420px;background:#fff}
-  .tp-table{width:100%;border-collapse:collapse;font-size:12.5px}
-  .tp-table th{
-    background:linear-gradient(135deg,#b45309,#f59e0b);color:#fff;font-weight:600;font-size:11px;
-    text-transform:uppercase;letter-spacing:.4px;padding:9px 11px;text-align:left;position:sticky;top:0;z-index:2;
-  }
-  .tp-table td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top}
-  .tp-table tbody tr:nth-child(even){background:#fffbeb}
-  .tp-table tbody tr{cursor:pointer;transition:background .12s}
-  .tp-table tbody tr:hover{background:#fef3c7}
-  .tp-table td.tp-no{font-weight:700;color:#92400e;width:42px;text-align:center}
-  .tp-table td.tp-nama{font-weight:700;color:var(--text);min-width:160px}
-  .tp-table td.tp-nama .tp-badge{
-    display:inline-block;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;
-    border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;
-    letter-spacing:.3px;
-  }
-  .tp-table td.tp-judul{max-width:340px;color:var(--text)}
-  .tp-table td.tp-judul a{color:var(--primary);text-decoration:none;font-weight:600}
-  .tp-table td.tp-judul a:hover{text-decoration:underline}
-  .tp-table td.tp-meta{font-size:11px;color:var(--muted)}
-  .tp-table td.tp-meta .tg{
-    display:inline-block;background:#eff6ff;border:1px solid #dbeafe;color:#1e3a8a;
-    border-radius:5px;padding:1px 6px;margin:1px 3px 1px 0;font-size:10.5px;font-weight:600;
-  }
-  .tp-table td.tp-num{text-align:center;width:70px;color:var(--text);font-weight:600}
-  .tp-foot{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5}
-
   /* ---------- Penanda baris Terbaik di tabel utama ---------- */
   table tr.terbaik-row{background:#fffbeb !important}
   table tr.terbaik-row:hover{background:#fef3c7 !important}
@@ -154,13 +93,22 @@
     letter-spacing:.3px;white-space:nowrap;
   }
   table tr.terbaik-row td.nama .tp-mini::before{content:"★ "}
-  .tp-toggle-wrap{display:flex;align-items:center;gap:8px;margin-left:auto}
-  .tp-toggle{
-    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);
-    background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;user-select:none;
+
+  /* ---------- Tombol "Peserta Terbaik" di search box ---------- */
+  .btn-terbaik{
+    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
+    color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 14px;
+    user-select:none;transition:all .12s;white-space:nowrap;
   }
-  .tp-toggle input{margin:0;cursor:pointer;width:15px;height:15px;accent-color:#f59e0b}
-  .tp-toggle:hover{background:#fffbeb}
+  .btn-terbaik:hover{background:#fef3c7;border-color:#fbbf24}
+  .btn-terbaik.active{
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;border-color:#f59e0b;
+    box-shadow:0 3px 10px rgba(245,158,11,.4);
+  }
+  .btn-terbaik .cnt{
+    background:rgba(146,64,14,.15);color:#92400e;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
+  }
+  .btn-terbaik.active .cnt{background:rgba(255,255,255,.28);color:#fff}
 
   /* ---------- CHART GRID ---------- */
   .grid{display:grid;gap:18px;margin-bottom:20px}
@@ -315,6 +263,12 @@
       </div>
       <div class="field">
         <label>&nbsp;</label>
+        <button class="btn-terbaik" id="btn-terbaik" type="button" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
+          ★ Peserta Terbaik <span class="cnt" id="btn-terbaik-cnt">0</span>
+        </button>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
         <button class="btn ghost" id="btn-reset" style="width:100%">Reset Filter</button>
       </div>
     </div>
@@ -322,42 +276,6 @@
 
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
-
-  <!-- PESERTA TERBAIK (penanda dari Excel) -->
-  <div class="toppeserta-card" id="toppeserta-card">
-    <div class="toppeserta-head">
-      <div class="ttl">
-        <span class="trophy">★</span>
-        <div>
-          <h3>Peserta Terbaik</h3>
-          <div class="desc">Setiap baris = satu karya yang ditandai <b>"Terbaik"</b> pada kolom PERINGKAT di data sumber Excel</div>
-        </div>
-      </div>
-      <span class="info-pill"><b id="tp-total">0</b> karya terbaik</span>
-    </div>
-
-    <div class="tp-stats" id="tp-stats"></div>
-
-    <div class="tp-wrap">
-      <table class="tp-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nama Peserta</th>
-            <th>Judul Karya Terbaik</th>
-            <th>Asal Instansi</th>
-            <th style="text-align:center">Provinsi</th>
-            <th style="text-align:center">Tahun</th>
-            <th>Kategori</th>
-          </tr>
-        </thead>
-        <tbody id="tp-body"></tbody>
-      </table>
-    </div>
-    <div class="tp-foot">
-      Penanda <b>"Terbaik"</b> diambil langsung dari kolom <b>PERINGKAT</b> pada file Excel sumber — setiap baris di sini adalah satu karya (satu orang). Nama yang sama di tahun berbeda adalah orang yang berbeda. Baris dengan latar kuning di tabel utama di bawah juga menandai karya terbaik — aktifkan toggle <b>"Hanya Peserta Terbaik"</b> di tabel untuk memfilter. Klik baris di sini untuk memfilter tabel utama ke karya tersebut.
-    </div>
-  </div>
 
   <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
@@ -431,15 +349,9 @@
 
   <!-- TABLE -->
   <div class="card" style="margin-top:20px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
-      <div>
-        <h3>Daftar Peserta &amp; Karya</h3>
-        <div class="desc">Klik judul pada kolom "Judul Karya" untuk membuka dokumen asli. Baris berlatar <span style="background:#fffbeb;padding:0 6px;border-radius:4px;border:1px solid #fde68a"><b>kuning</b> ★</span> = karya terbaik.</div>
-      </div>
-      <label class="tp-toggle">
-        <input type="checkbox" id="f-only-terbaik" />
-        <span>★ Hanya Peserta Terbaik</span>
-      </label>
+    <div>
+      <h3>Daftar Peserta &amp; Karya</h3>
+      <div class="desc">Klik judul pada kolom "Judul Karya" untuk membuka dokumen asli. Baris berlatar <span style="background:#fffbeb;padding:0 6px;border-radius:4px;border:1px solid #fde68a"><b>kuning</b> ★</span> = karya terbaik. Untuk memfilter hanya peserta terbaik, klik tombol <b>★ Peserta Terbaik</b> di baris filter atas.</div>
     </div>
     <div class="table-wrap">
       <table id="tbl">
@@ -478,6 +390,7 @@ let filtered = [];
 let page = 1;
 let namaFocus = '';        // nama peserta yang dipilih (untuk label info saja)
 let idFocus = 0;           // id record yang dipilih dari "Peserta Terbaik" — filter tabel ke karya TEPAT itu
+let onlyTerbaikOn = false; // toggle "★ Peserta Terbaik" — filter tabel hanya ke karya terbaik
 const PAGE_SIZE = 25;
 const charts = {};
 
@@ -585,8 +498,13 @@ function applyFilter(){
     return true;
   });
   page = 1;
+  // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif
+  const terbaikInFilter = filtered.filter(r => r.terbaik).length;
+  const cntEl = document.getElementById('btn-terbaik-cnt');
+  if(cntEl) cntEl.textContent = terbaikInFilter.toLocaleString('id-ID');
+  const btnTerbaik = document.getElementById('btn-terbaik');
+  if(btnTerbaik) btnTerbaik.classList.toggle('active', onlyTerbaikOn);
   renderKPI();
-  renderTopPeserta();
   renderCharts();
   renderMap();
   renderTable();
@@ -734,71 +652,6 @@ function toTitleCase(s){
     if(w === 'i') return 'I';
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(' ');
-}
-
-// ━━━ PESERTA TERBAIK (dari penanda Excel, bukan skor hitungan) ━━━
-// Sumber: kolom PERINGKAT = "Terbaik" pada Excel → record.terbaik === true di data.json
-function renderTopPeserta(){
-  // Setiap karya Terbaik ditampilkan sebagai baris sendiri — TIDAK ada agregasi per nama.
-  // Nama sama di tahun berbeda = orang berbeda (sesuai klarifikasi pengguna).
-  const terbaikInFilter = filtered.filter(r => r.terbaik);
-  // urut: tahun asc (kronologis), lalu nama asc
-  const list = [...terbaikInFilter].sort((a,b)=>
-    String(a.tahun||'').localeCompare(String(b.tahun||'')) || a.nama.localeCompare(b.nama));
-
-  // Header info pill
-  document.getElementById('tp-total').textContent = list.length.toLocaleString('id-ID');
-
-  // stats: by kategori & by tahun (dari karya terbaik dalam filter)
-  const katCnt = {}, thCnt = {};
-  terbaikInFilter.forEach(r=>{
-    if(r.kategori) katCnt[r.kategori] = (katCnt[r.kategori]||0)+1;
-    if(r.tahun) thCnt[r.tahun] = (thCnt[r.tahun]||0)+1;
-  });
-  const thSorted = Object.keys(thCnt).sort();
-  const totalTerbaik = DATA.stats.terbaik ? DATA.stats.terbaik.total_karya_terbaik : 0;
-  document.getElementById('tp-stats').innerHTML = `
-    <span class="ms-pill">Ditampilkan: <b>${list.length.toLocaleString('id-ID')}</b> dari <b>${totalTerbaik.toLocaleString('id-ID')}</b> karya terbaik (sesuai filter)</span>
-    <span class="ms-pill">Pemda: <b>${katCnt['Pemda']||0}</b> • K/L: <b>${katCnt['K/L']||0}</b></span>
-    <span class="ms-pill">Rentang tahun: <b>${thSorted[0]||'—'} – ${thSorted[thSorted.length-1]||'—'}</b></span>
-  `;
-
-  // Tabel — satu baris per karya
-  const tbody = document.getElementById('tp-body');
-  if(list.length === 0){
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada karya terbaik pada filter ini.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map((r, i)=>{
-    const judulHtml = r.link
-      ? `<a href="${escapeHtml(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.judul)}</a>`
-      : escapeHtml(r.judul);
-    const instansi = r.asal_instansi || '—';
-    const prov = (r.provinsi && r.provinsi !== '-') ? r.provinsi : '—';
-    const thn = r.tahun || '—';
-    const kat = r.kategori || '—';
-    return `<tr data-id="${r.id}" data-nama="${escapeHtml(r.nama)}">
-      <td class="tp-no">${i+1}</td>
-      <td class="tp-nama">${escapeHtml(r.nama)} <span class="tp-badge">TERBAIK</span></td>
-      <td class="tp-judul">${judulHtml}</td>
-      <td class="tp-meta">${escapeHtml(instansi)}</td>
-      <td class="tp-meta">${escapeHtml(prov)}</td>
-      <td class="tp-meta" style="text-align:center">${escapeHtml(thn)}</td>
-      <td class="tp-meta">${escapeHtml(kat)}</td>
-    </tr>`;
-  }).join('');
-
-  // Klik baris → filter tabel utama ke karya TEPAT itu (pakai id record, bukan nama)
-  tbody.querySelectorAll('tr[data-id]').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      idFocus = parseInt(el.dataset.id, 10);
-      namaFocus = el.dataset.nama;   // untuk label info
-      page = 1;
-      renderTable();
-      toast(`Tabel difilter: karya ${el.dataset.nama} (${el.dataset.id})`);
-      document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  });
 }
 
 function renderKPI(){
@@ -985,7 +838,7 @@ function chartOpts(o={}){
 
 function renderTable(){
   const tbody = document.getElementById('tbody');
-  const onlyTerbaik = document.getElementById('f-only-terbaik')?.checked;
+  const onlyTerbaik = onlyTerbaikOn;
   let tblRecords = filtered;
   if(onlyTerbaik) tblRecords = tblRecords.filter(r => r.terbaik);
   if(idFocus)      tblRecords = tblRecords.filter(r => r.id === idFocus);
@@ -1070,15 +923,22 @@ function escapeHtml(s){
     else applyFilter();
   });
 });
-// Toggle "Hanya Peserta Terbaik" — hanya re-render tabel (bukan seluruh dashboard)
-document.getElementById('f-only-terbaik').addEventListener('change', ()=>{
+// Tombol "★ Peserta Terbaik" — toggle filter tabel hanya ke karya terbaik + scroll ke tabel
+document.getElementById('btn-terbaik').addEventListener('click', ()=>{
+  onlyTerbaikOn = !onlyTerbaikOn;
   namaFocus = ''; idFocus = 0;
   page = 1;
-  renderTable();
+  applyFilter();
+  if(onlyTerbaikOn){
+    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
+    toast(`Menampilkan hanya peserta terbaik (${filtered.filter(r=>r.terbaik).length} karya)`);
+  } else {
+    toast('Menampilkan semua karya');
+  }
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-only-terbaik').checked = false;
+  onlyTerbaikOn = false;
   namaFocus = ''; idFocus = 0;
   applyFilter();
   toast('Filter direset');
