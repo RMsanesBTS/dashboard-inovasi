@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jejak Inovasi — Dashboard Inovasi Alumni Pelatihan PUSJAR SKTAN</title>
+<title>Jejak Inovasi — Dashboard Inovasi Alumni Pelatihan LAN</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
@@ -79,6 +79,86 @@
   .kpi .label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* ---------- PESERTA TERBAIK ---------- */
+  .toppeserta-card{
+    background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+    border:1px solid var(--border);border-radius:16px;padding:20px 22px;
+    box-shadow:var(--shadow);margin-bottom:20px;position:relative;overflow:hidden;
+  }
+  .toppeserta-card::before{
+    content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;
+    background:radial-gradient(circle, rgba(245,158,11,.12) 0%, rgba(245,158,11,0) 70%);
+    pointer-events:none;
+  }
+  .toppeserta-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;position:relative}
+  .toppeserta-head .ttl{display:flex;align-items:center;gap:10px}
+  .toppeserta-head .ttl .trophy{
+    width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;font-size:18px;font-weight:800;
+    box-shadow:0 4px 10px rgba(245,158,11,.35);
+  }
+  .toppeserta-head h3{margin:0;font-size:15.5px;font-weight:800;color:var(--text)}
+  .toppeserta-head .desc{margin:1px 0 0;font-size:11.5px;color:var(--muted)}
+  .toppeserta-head .info-pill{
+    background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:999px;
+    padding:5px 12px;font-size:11.5px;font-weight:600;
+  }
+  .toppeserta-head .info-pill b{color:#78350f}
+
+  .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:end;margin-bottom:14px}
+  @media(max-width:760px){.podium{grid-template-columns:1fr;gap:10px}}
+  .podium-cell{
+    background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px;
+    position:relative;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .podium-cell:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  .podium-cell.p1{border-color:#f59e0b;background:linear-gradient(180deg,#fffbeb 0%,#ffffff 60%)}
+  .podium-cell.p2{border-color:#94a3b8;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 60%)}
+  .podium-cell.p3{border-color:#b45309;background:linear-gradient(180deg,#fef3c7 0%,#ffffff 60%)}
+  .podium-rank{
+    position:absolute;top:-12px;left:14px;width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;
+    box-shadow:0 3px 8px rgba(15,23,42,.18);
+  }
+  .p1 .podium-rank{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+  .p2 .podium-rank{background:linear-gradient(135deg,#64748b,#94a3b8)}
+  .p3 .podium-rank{background:linear-gradient(135deg,#b45309,#d97706)}
+  .podium-name{font-size:15px;font-weight:800;color:var(--text);line-height:1.2;margin-top:6px}
+  .podium-meta{font-size:11px;color:var(--muted)}
+  .podium-score{display:flex;align-items:baseline;gap:6px;margin-top:2px}
+  .podium-score .num{font-size:24px;font-weight:800;color:var(--primary-dark);line-height:1}
+  .podium-score .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .podium-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+  .podium-tags .tg{
+    background:#eff6ff;border:1px solid #dbeafe;color:#1e3a8a;border-radius:6px;
+    padding:2px 7px;font-size:10.5px;font-weight:600;
+  }
+  .podium-tags .tg.prior{background:#ede9fe;border-color:#ddd6fe;color:#5b21b6}
+  .podium-empty{grid-column:1/-1;text-align:center;padding:24px;color:var(--muted);font-size:13px}
+
+  .lb-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px;max-height:340px;margin-top:6px}
+  .lb-table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
+  .lb-table th{
+    background:var(--primary-dark);color:#fff;font-weight:600;font-size:11px;text-transform:uppercase;
+    letter-spacing:.4px;padding:8px 10px;text-align:left;position:sticky;top:0;z-index:2;
+  }
+  .lb-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+  .lb-table tbody tr:nth-child(even){background:#f8fafc}
+  .lb-table tbody tr{cursor:pointer}
+  .lb-table tbody tr:hover{background:#eff6ff}
+  .lb-table td.lb-rank{font-weight:800;color:var(--primary-dark);width:46px;text-align:center}
+  .lb-table td.lb-nama{font-weight:700;color:var(--text);min-width:150px}
+  .lb-table td.lb-score{font-weight:800;color:var(--primary-dark);width:64px;text-align:right}
+  .lb-table td.lb-num{text-align:center;width:70px;color:var(--text)}
+  .lb-table td.lb-detail{font-size:11px;color:var(--muted)}
+  .lb-table td.lb-detail .tg{
+    display:inline-block;background:#eff6ff;border:1px solid #dbeafe;color:#1e3a8a;
+    border-radius:5px;padding:1px 6px;margin:1px 3px 1px 0;font-size:10.5px;font-weight:600;
+  }
+  .lb-table td.lb-detail .tg.prior{background:#ede9fe;border-color:#ddd6fe;color:#5b21b6}
+  .lb-foot{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
 
   /* ---------- CHART GRID ---------- */
   .grid{display:grid;gap:18px;margin-bottom:20px}
@@ -184,7 +264,7 @@
       <img src="logo-lan.png" alt="Logo LAN" class="logo-lan" />
       <div class="brand-text">
         <h1>JEJAK INOVASI</h1>
-        <p>Dashboard Inovasi Alumni Pelatihan PUSJAR SKTAN</p>
+        <p>Dashboard Inovasi Alumni Pelatihan LAN</p>
       </div>
     </div>
     <div class="header-meta">
@@ -240,6 +320,45 @@
 
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
+
+  <!-- PESERTA TERBAIK -->
+  <div class="toppeserta-card" id="toppeserta-card">
+    <div class="toppeserta-head">
+      <div>
+        <div class="ttl">
+          <span class="trophy">★</span>
+          <div>
+            <h3>Peserta Terbaik</h3>
+            <div class="desc">Peringkat alumni berdasarkan jumlah &amp; keragaman karya inovasi</div>
+          </div>
+        </div>
+      </div>
+      <span class="info-pill">Metode: skor = <b>10</b>/karya + <b>8</b>/Program Prioritas + <b>3</b>/bidang + <b>2</b>/provinsi</span>
+    </div>
+
+    <div class="podium" id="podium"></div>
+
+    <div class="lb-wrap">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nama Peserta</th>
+            <th style="text-align:center">Skor</th>
+            <th style="text-align:center">Karya</th>
+            <th style="text-align:center">Prioritas</th>
+            <th style="text-align:center">Bidang</th>
+            <th style="text-align:center">Provinsi</th>
+            <th>Program Prioritas &amp; Tahun</th>
+          </tr>
+        </thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
+    <div class="lb-foot">
+      Klik nama peserta pada podium atau tabel untuk memfilter karyanya di tabel utama di bawah. Skor bersifat indikatif — menilai <b>jumlah</b> dan <b>keragaman</b> kontribusi, bukan mutu substantif karya.
+    </div>
+  </div>
 
   <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
@@ -340,7 +459,7 @@
 </main>
 
 <footer>
-  Dibangun dari data <b>Pisah_Asal_Daerah_dengan_Provinsi (6).xlsx</b> — Jejak Inovasi, Dashboard Alumni Pelatihan PUSJAR SKTAN<br>
+  Dibangun dari data <b>Pisah_Asal_Daerah_dengan_Provinsi (6).xlsx</b> — Jejak Inovasi, Dashboard Alumni Pelatihan LAN<br>
   Tutorial deploy ke Netlify tersedia di file PDF <b>Tutorial_Deploy_Netlify.pdf</b>
 </footer>
 
@@ -350,6 +469,7 @@
 let DATA = null;
 let filtered = [];
 let page = 1;
+let namaFocus = '';        // nama yang dipilih dari "Peserta Terbaik" — filter tabel saja
 const PAGE_SIZE = 25;
 const charts = {};
 
@@ -458,6 +578,7 @@ function applyFilter(){
   });
   page = 1;
   renderKPI();
+  renderTopPeserta();
   renderCharts();
   renderMap();
   renderTable();
@@ -605,6 +726,109 @@ function toTitleCase(s){
     if(w === 'i') return 'I';
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(' ');
+}
+
+// ━━━ PESERTA TERBAIK ━━━
+// Skor = 10/karya + 8/Program Prioritas unik + 3/bidang inovasi unik + 2/provinsi unik + 1/tahun unik
+// Dihitung dari data terfilter, jadi selalu konsisten dengan filter aktif (provinsi, tahun, bidang, dll.)
+const PRIORITAS_LABEL = (s) => (s && s !== 'Tidak Ada') ? s : '';
+
+function scorePeserta(records){
+  // kelompokkan record per nama
+  const m = new Map();
+  for(const r of records){
+    const k = r.nama;
+    if(!m.has(k)){
+      m.set(k, {
+        nama:k, karya:0,
+        prioritas:new Set(), bidang:new Set(), provinsi:new Set(), tahun:new Set(),
+        recs:[]
+      });
+    }
+    const p = m.get(k);
+    p.karya++;
+    const pr = PRIORITAS_LABEL(r.prioritas_singkat);
+    if(pr) p.prioritas.add(pr);
+    if(r.bidang_inovasi && r.bidang_inovasi !== '-') p.bidang.add(r.bidang_inovasi);
+    if(r.provinsi && r.provinsi !== '-') p.provinsi.add(r.provinsi);
+    if(r.tahun) p.tahun.add(String(r.tahun));
+    p.recs.push(r);
+  }
+  const arr = [];
+  for(const p of m.values()){
+    const skor = p.karya*10 + p.prioritas.size*8 + p.bidang.size*3 + p.provinsi.size*2 + p.tahun.size*1;
+    arr.push({...p, skor});
+  }
+  // urut: skor desc, karya desc, prioritas desc, nama asc
+  arr.sort((a,b)=> b.skor-a.skor || b.karya-a.karya || b.prioritas.size-a.prioritas.size || a.nama.localeCompare(b.nama));
+  return arr;
+}
+
+function renderTopPeserta(){
+  const scored = scorePeserta(filtered);
+  const podium = document.getElementById('podium');
+  const lbBody = document.getElementById('lb-body');
+
+  if(scored.length === 0){
+    podium.innerHTML = '<div class="podium-empty">Tidak ada peserta pada filter ini.</div>';
+    lbBody.innerHTML = '<tr><td colspan="8" class="podium-empty">—</td></tr>';
+    return;
+  }
+
+  // PODIUM (top 3) — tampil urut 2,1,3 agar juara 1 di tengah
+  const top3 = scored.slice(0,3);
+  const order = [];
+  if(top3[1]) order.push({p:top3[1], cls:'p2', rank:2});
+  if(top3[0]) order.push({p:top3[0], cls:'p1', rank:1});
+  if(top3[2]) order.push({p:top3[2], cls:'p3', rank:3});
+
+  podium.innerHTML = order.map(({p,cls,rank})=>{
+    const tags = [...p.prioritas].slice(0,4).map(s=>`<span class="tg prior">${escapeHtml(s)}</span>`).join('')
+               + [...p.bidang].slice(0,2).map(s=>`<span class="tg">${escapeHtml(s)}</span>`).join('');
+    return `<div class="podium-cell ${cls}" data-nama="${escapeHtml(p.nama)}">
+      <div class="podium-rank">${rank}</div>
+      <div class="podium-name">${escapeHtml(p.nama)}</div>
+      <div class="podium-meta">${p.provinsi.size ? escapeHtml([...p.provinsi].join(', ')) : '—'} • ${p.tahun.size ? [...p.tahun].sort().join(', ') : '—'}</div>
+      <div class="podium-score"><span class="num">${p.skor}</span><span class="lbl">skor</span></div>
+      <div class="podium-meta">${p.karya} karya • ${p.prioritas.size} prioritas • ${p.bidang.size} bidang</div>
+      <div class="podium-tags">${tags || '<span class="podium-meta">—</span>'}</div>
+    </div>`;
+  }).join('');
+
+  // LEADERBOARD TABLE (top 15)
+  const top = scored.slice(0,15);
+  lbBody.innerHTML = top.map((p,i)=>{
+    const rank = i+1;
+    const priTags = [...p.prioritas].map(s=>`<span class="tg prior">${escapeHtml(s)}</span>`).join('')
+                 || '<span class="muted">—</span>';
+    const thn = [...p.tahun].sort().join(', ');
+    return `<tr data-nama="${escapeHtml(p.nama)}">
+      <td class="lb-rank">${rank}</td>
+      <td class="lb-nama">${escapeHtml(p.nama)}</td>
+      <td class="lb-score">${p.skor}</td>
+      <td class="lb-num">${p.karya}</td>
+      <td class="lb-num">${p.prioritas.size}</td>
+      <td class="lb-num">${p.bidang.size}</td>
+      <td class="lb-num">${p.provinsi.size}</td>
+      <td class="lb-detail">${priTags} <span style="display:block;margin-top:2px">Tahun: ${escapeHtml(thn) || '—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Klik peserta → filter tabel utama ke karya peserta tersebut (podium tetap utuh)
+  const onPick = (nama)=>{
+    if(!nama) return;
+    namaFocus = nama;
+    page = 1;
+    renderTable();
+    toast(`Tabel difilter: karya ${nama}`);
+    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
+  };
+  podium.querySelectorAll('[data-nama]').forEach(el=>{
+    el.addEventListener('click', ()=> onPick(el.dataset.nama));
+  });
+  lbBody.querySelectorAll('tr[data-nama]').forEach(el=>{
+    el.addEventListener('click', ()=> onPick(el.dataset.nama));
+  });
 }
 
 function renderKPI(){
@@ -787,11 +1011,14 @@ function chartOpts(o={}){
 
 function renderTable(){
   const tbody = document.getElementById('tbody');
-  const total = filtered.length;
+  const tblRecords = namaFocus
+    ? filtered.filter(r => r.nama === namaFocus)
+    : filtered;
+  const total = tblRecords.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if(page > pages) page = pages;
   const start = (page-1)*PAGE_SIZE;
-  const slice = filtered.slice(start, start+PAGE_SIZE);
+  const slice = tblRecords.slice(start, start+PAGE_SIZE);
 
   if(slice.length === 0){
     tbody.innerHTML = `<tr><td colspan="8" class="empty">Tidak ada data yang cocok dengan filter.</td></tr>`;
@@ -819,8 +1046,16 @@ function renderTable(){
     }).join('');
   }
 
-  document.getElementById('tbl-info').textContent =
-    `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`;
+  document.getElementById('tbl-info').innerHTML =
+    namaFocus
+      ? `<span class="badge prior" style="margin-right:8px">Tabel terfilter ke: ${escapeHtml(namaFocus)}</span>
+         <a href="#" id="clear-namafocus" class="link">Tampilkan semua karya</a> •
+         ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`
+      : `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`;
+  if(namaFocus){
+    const cl = document.getElementById('clear-namafocus');
+    if(cl) cl.onclick = (e)=>{ e.preventDefault(); namaFocus=''; renderTable(); };
+  }
 
   const pag = document.getElementById('pagination');
   let btns = '';
@@ -849,12 +1084,14 @@ function escapeHtml(s){
   const el = document.getElementById(id);
   const ev = id === 'f-search' ? 'input' : 'change';
   el.addEventListener(ev, ()=>{
+    namaFocus = '';  // ganti filter utama → hapus fokus nama peserta
     if(id==='f-search'){ clearTimeout(window._st); window._st = setTimeout(applyFilter, 250); }
     else applyFilter();
   });
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
+  namaFocus = '';
   applyFilter();
   toast('Filter direset');
 });
