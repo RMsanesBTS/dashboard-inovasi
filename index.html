@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jejak Inovasi — Dashboard Inovasi Alumni Pelatihan LAN</title>
+<title>Jejak Inovasi — Dashboard Inovasi Alumni Pelatihan PUSJAR SKTAN</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
@@ -20,7 +20,6 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     background:var(--bg); color:var(--text); font-size:14px; line-height:1.5;
   }
-  /* ---------- HEADER ---------- */
   header{
     background:linear-gradient(120deg,#1e3a8a 0%,#1d4ed8 60%,#0ea5e9 100%);
     color:#fff; padding:18px 32px; box-shadow:var(--shadow-lg);
@@ -38,16 +37,12 @@
   .header-meta{display:flex;gap:14px;align-items:center;font-size:12px;flex-wrap:wrap}
   .header-meta .pill{background:rgba(255,255,255,.14);padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.22)}
   .header-meta b{font-weight:700}
-
-  /* ---------- LAYOUT ---------- */
   main{max-width:1400px;margin:0 auto;padding:24px 32px 60px}
   .toolbar{
     background:var(--card);border:1px solid var(--border);border-radius:14px;
     padding:16px 18px;box-shadow:var(--shadow);margin-bottom:20px;
   }
-  .toolbar-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:12px 14px;align-items:end;
-  }
+  .toolbar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 14px;align-items:end;}
   @media(max-width:1100px){.toolbar-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.toolbar-grid{grid-template-columns:1fr}}
   .field{display:flex;flex-direction:column;gap:6px}
@@ -58,86 +53,51 @@
   }
   select:focus,input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
   .toolbar-actions{display:flex;justify-content:flex-end;margin-top:12px;gap:8px}
-  .btn{
-    background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
-    transition:background .15s;
-  }
+  .btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
   .btn:hover{background:var(--primary-dark)}
   .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn.ghost:hover{background:#f8fafc}
-
-  /* ---------- KPI ---------- */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px}
-  .kpi{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
-    box-shadow:var(--shadow);position:relative;overflow:hidden;
-  }
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
   .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
   .kpi.k2::before{background:var(--accent2)}
-  .kpi.k3::before{background:var(--accent3)}
-  .kpi.k4::before{background:var(--primary)}
-  .kpi .label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .kpi.k3::before{background:#d97706}
+  .kpi.k4::before{background:var(--accent3)}
+  .kpi.k5::before{background:var(--primary)}
+  .kpi.terbaik{background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);border-color:#fcd34d}
+  .kpi.terbaik .value{color:#b45309}
+  .kpi .label{font-size:11.5px;font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
-
-  /* ---------- CHART GRID ---------- */
   .grid{display:grid;gap:18px;margin-bottom:20px}
   .grid.cols-2{grid-template-columns:1fr 1fr}
   @media(max-width:1100px){.grid.cols-2{grid-template-columns:1fr}}
-  .card{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);
-  }
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);}
   .card h3{margin:0 0 4px;font-size:14.5px;font-weight:700;color:var(--text)}
   .card .desc{font-size:11.5px;color:var(--muted);margin-bottom:14px}
   .chart-box{position:relative;height:300px}
   .chart-box.tall{height:360px}
-
-  /* ---------- PETA SEBARAN ---------- */
-  .map-card{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
-    box-shadow:var(--shadow);margin-bottom:20px;
-  }
+  .map-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:20px;}
   .map-card h3{margin:0 0 4px;font-size:15px;font-weight:700}
   .map-card .desc{font-size:12px;color:var(--muted);margin-bottom:14px}
   .map-box{width:100%;height:560px}
-  .map-legend{
-    display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:14px;padding-top:12px;
-    border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);
-  }
+  .map-legend{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);}
   .map-legend .lg-item{display:flex;align-items:center;gap:7px}
   .map-legend .lg-swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
-  .map-legend .scale-bar{
-    display:flex;align-items:center;gap:0;height:14px;border-radius:3px;overflow:hidden;
-  }
+  .map-legend .scale-bar{display:flex;align-items:center;gap:0;height:14px;border-radius:3px;overflow:hidden;}
   .map-legend .scale-bar span{flex:1;height:14px}
-  .map-stats{
-    display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:11.5px;
-  }
-  .map-stats .ms-pill{
-    background:#f1f5f9;border:1px solid var(--border);border-radius:999px;
-    padding:3px 10px;color:var(--text);
-  }
+  .map-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:11.5px;}
+  .map-stats .ms-pill{background:#f1f5f9;border:1px solid var(--border);border-radius:999px;padding:3px 10px;color:var(--text);}
   .map-stats .ms-pill b{color:var(--primary-dark);font-weight:700}
-
-  /* ---------- LEGENDA PRIORITAS ---------- */
-  .legend-card{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);
-    margin-bottom:20px;
-  }
+  .legend-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:20px;}
   .legend-card h3{margin:0 0 4px;font-size:14.5px;font-weight:700}
   .legend-card .desc{font-size:11.5px;color:var(--muted);margin-bottom:12px}
   .legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 16px}
   .legend-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--border)}
   .legend-item:last-child{border-bottom:0}
-  .legend-no{
-    flex-shrink:0; min-width:26px; height:26px; border-radius:6px;
-    background:var(--primary); color:#fff; font-weight:700; font-size:12px;
-    display:flex;align-items:center;justify-content:center;
-  }
+  .legend-no{flex-shrink:0; min-width:26px; height:26px; border-radius:6px;background:var(--primary); color:#fff; font-weight:700; font-size:12px;display:flex;align-items:center;justify-content:center;}
   .legend-item .lname{font-weight:600;color:var(--text)}
   .legend-item .ldesc{color:var(--muted);font-size:11.5px;margin-top:1px}
-
-  /* ---------- TABLE ---------- */
   .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border);max-height:560px}
   table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
   thead{position:sticky;top:0;z-index:2;background:var(--primary-dark)}
@@ -156,24 +116,22 @@
   .badge.bidang{background:#f1f5f9;color:#334155;border:1px solid var(--border)}
   .badge.prior{background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe}
   .badge.adm{background:#e0f2fe;color:#075985;border:1px solid #bae6fd}
+  tbody tr.terbaik{background:linear-gradient(90deg,#fffbeb 0%,#fef3c7 100%)}
+  tbody tr.terbaik:hover{background:linear-gradient(90deg,#fef3c7 0%,#fde68a 100%)}
+  tbody tr.terbaik td{border-bottom:1px solid #fcd34d}
+  .badge.terbaik{background:#fbbf24;color:#7c2d12;border:1px solid #f59e0b;font-weight:700;display:inline-flex;align-items:center;gap:3px}
+  .badge.terbaik::before{content:"★";font-size:10px;color:#b45309}
   a.link{color:var(--primary);text-decoration:none;font-weight:600;font-size:11.5px}
   a.link:hover{text-decoration:underline}
   .table-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
   .pagination{display:flex;gap:6px;flex-wrap:wrap}
-  .pagination button{
-    border:1px solid var(--border);background:#fff;padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;
-  }
+  .pagination button{border:1px solid var(--border);background:#fff;padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;}
   .pagination button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
   .pagination button:disabled{opacity:.4;cursor:not-allowed}
-
   .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
   .muted{color:var(--muted)}
   footer{text-align:center;padding:24px;color:var(--muted);font-size:12px}
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:#0f172a;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;
-    box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;
-  }
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;}
   .toast.show{opacity:1}
 </style>
 </head>
@@ -194,61 +152,31 @@
     </div>
   </div>
 </header>
-
 <main>
-  <!-- TOOLBAR FILTER (4 kolom) -->
   <div class="toolbar">
     <div class="toolbar-grid">
-      <div class="field">
-        <label>Cari nama / judul</label>
-        <input id="f-search" type="search" placeholder="Ketik nama peserta atau judul…" />
-      </div>
-      <div class="field">
-        <label>Provinsi</label>
-        <select id="f-prov"><option value="">Semua Provinsi</option></select>
-      </div>
-      <div class="field">
-        <label>Tahun</label>
-        <select id="f-tahun"><option value="">Semua Tahun</option></select>
-      </div>
-      <div class="field">
-        <label>Instansi</label>
-        <select id="f-kategori">
-          <option value="">Semua Instansi</option>
-          <option value="Pemda">Pemda</option>
-          <option value="K/L">K/L</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Program Prioritas</label>
-        <select id="f-prioritas"><option value="">Semua Prioritas</option></select>
-      </div>
-      <div class="field">
-        <label>Bidang Administrasi Negara</label>
-        <select id="f-adm"><option value="">Semua Bidang</option></select>
-      </div>
-      <div class="field">
-        <label>Bidang Inovasi</label>
-        <select id="f-bidang"><option value="">Semua Bidang</option></select>
-      </div>
-      <div class="field">
-        <label>&nbsp;</label>
-        <button class="btn ghost" id="btn-reset" style="width:100%">Reset Filter</button>
+      <div class="field"><label>Cari nama / judul</label><input id="f-search" type="search" placeholder="Ketik nama peserta atau judul…" /></div>
+      <div class="field"><label>Provinsi</label><select id="f-prov"><option value="">Semua Provinsi</option></select></div>
+      <div class="field"><label>Tahun</label><select id="f-tahun"><option value="">Semua Tahun</option></select></div>
+      <div class="field"><label>Instansi</label><select id="f-kategori"><option value="">Semua Instansi</option><option value="Pemda">Pemda</option><option value="K/L">K/L</option></select></div>
+      <div class="field"><label>Program Prioritas</label><select id="f-prioritas"><option value="">Semua Prioritas</option></select></div>
+      <div class="field"><label>Bidang Administrasi Negara</label><select id="f-adm"><option value="">Semua Bidang</option></select></div>
+      <div class="field"><label>Bidang Inovasi</label><select id="f-bidang"><option value="">Semua Bidang</option></select></div>
+      <div class="field"><label>&nbsp;</label><button class="btn ghost" id="btn-reset" style="width:100%">Reset Filter</button></div>
+      <div class="field" style="min-width:170px"><label>&nbsp;</label>
+        <label class="toggle-terbaik" style="display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #fcd34d;border-radius:8px;background:#fffbeb;cursor:pointer;font-size:12.5px;font-weight:700;color:#7c2d12;height:38px">
+          <input type="checkbox" id="f-terbaik" style="width:16px;height:16px;accent-color:#d97706;cursor:pointer">
+          <span>★ Hanya Peserta Terbaik</span>
+        </label>
       </div>
     </div>
   </div>
-
-  <!-- KPI -->
   <div class="kpis" id="kpis"></div>
-
-  <!-- LEGENDA PROGRAM PRIORITAS -->
   <div class="legend-card" id="legend-card">
     <h3>Keterangan Program Prioritas</h3>
     <div class="desc">8 Program Prioritas yang menjadi fokus pembangunan nasional</div>
     <div class="legend-grid" id="legend-grid"></div>
   </div>
-
-  <!-- PETA SEBARAN PROVINSI -->
   <div class="map-card">
     <h3>Peta Sebaran Karya Inovasi per Provinsi</h3>
     <div class="desc">Warna lebih tua = jumlah karya inovasi alumni lebih banyak. Arahkan kursor ke provinsi untuk detail. Klik provinsi untuk memfilter tabel.</div>
@@ -256,11 +184,7 @@
     <div class="map-legend">
       <div class="lg-item">
         <span class="scale-bar">
-          <span style="background:#dbeafe"></span>
-          <span style="background:#93c5fd"></span>
-          <span style="background:#3b82f6"></span>
-          <span style="background:#1d4ed8"></span>
-          <span style="background:#1e3a8a"></span>
+          <span style="background:#dbeafe"></span><span style="background:#93c5fd"></span><span style="background:#3b82f6"></span><span style="background:#1d4ed8"></span><span style="background:#1e3a8a"></span>
         </span>
         <span>Sedikit → Banyak karya</span>
       </div>
@@ -268,175 +192,64 @@
     </div>
     <div class="map-stats" id="map-stats"></div>
   </div>
-
-  <!-- CHART ROW 1 -->
   <div class="grid cols-2">
-    <div class="card">
-      <h3>Tren Jumlah Karya per Tahun</h3>
-      <div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div>
-      <div class="chart-box tall"><canvas id="c-tren"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Karya per Instansi (Pemda vs K/L)</h3>
-      <div class="desc">Perbandingan kontribusi Pemerintah Daerah dan Kementerian/Lembaga</div>
-      <div class="chart-box tall"><canvas id="c-kategori"></canvas></div>
-    </div>
+    <div class="card"><h3>Tren Jumlah Karya per Tahun</h3><div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div><div class="chart-box tall"><canvas id="c-tren"></canvas></div></div>
+    <div class="card"><h3>Karya per Instansi (Pemda vs K/L)</h3><div class="desc">Perbandingan kontribusi Pemerintah Daerah dan Kementerian/Lembaga</div><div class="chart-box tall"><canvas id="c-kategori"></canvas></div></div>
   </div>
-
-  <!-- CHART ROW 2 -->
   <div class="grid cols-2">
-    <div class="card">
-      <h3>Top 12 Provinsi</h3>
-      <div class="desc">Provinsi dengan jumlah karya terbanyak</div>
-      <div class="chart-box tall"><canvas id="c-prov"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Top Bidang Inovasi</h3>
-      <div class="desc">Distribusi karya berdasarkan bidang inovasi</div>
-      <div class="chart-box tall"><canvas id="c-bidang"></canvas></div>
-    </div>
+    <div class="card"><h3>Top 12 Provinsi</h3><div class="desc">Provinsi dengan jumlah karya terbanyak</div><div class="chart-box tall"><canvas id="c-prov"></canvas></div></div>
+    <div class="card"><h3>Top Bidang Inovasi</h3><div class="desc">Distribusi karya berdasarkan bidang inovasi</div><div class="chart-box tall"><canvas id="c-bidang"></canvas></div></div>
   </div>
-
-  <!-- CHART ROW 3: Program Prioritas & Administrasi Negara -->
   <div class="grid cols-2">
-    <div class="card">
-      <h3>Program Prioritas</h3>
-      <div class="desc">Distribusi karya berdasarkan 8 Program Prioritas</div>
-      <div class="chart-box tall"><canvas id="c-prioritas"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Bidang Administrasi Negara</h3>
-      <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
-      <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
-    </div>
+    <div class="card"><h3>Program Prioritas</h3><div class="desc">Distribusi karya berdasarkan 8 Program Prioritas</div><div class="chart-box tall"><canvas id="c-prioritas"></canvas></div></div>
+    <div class="card"><h3>Bidang Administrasi Negara</h3><div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div><div class="chart-box tall"><canvas id="c-adm"></canvas></div></div>
   </div>
-
-  <!-- TABLE -->
   <div class="card" style="margin-top:20px">
     <h3>Daftar Peserta &amp; Karya</h3>
-    <div class="desc">Klik judul pada kolom "Judul Karya" untuk membuka dokumen asli. Gunakan filter di atas untuk menyaring data.</div>
+    <div class="desc">Gunakan filter di atas untuk menyaring data.</div>
     <div class="table-wrap">
       <table id="tbl">
-        <thead>
-          <tr>
-            <th style="width:42px">No</th>
-            <th style="width:160px">Nama Peserta</th>
-            <th>Judul Karya</th>
-            <th style="width:150px">Provinsi / Daerah</th>
-            <th style="width:90px">Instansi</th>
-            <th style="width:70px">Tahun</th>
-            <th style="width:160px">Program Prioritas</th>
-            <th style="width:170px">Bidang Inovasi</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th style="width:42px">No</th><th style="width:160px">Nama Peserta</th><th>Judul Karya</th><th style="width:150px">Provinsi / Daerah</th><th style="width:90px">Instansi</th><th style="width:70px">Tahun</th><th style="width:160px">Program Prioritas</th><th style="width:170px">Bidang Inovasi</th>
+        </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div class="table-foot">
-      <div id="tbl-info" class="muted">—</div>
-      <div class="pagination" id="pagination"></div>
-    </div>
+    <div class="table-foot"><div id="tbl-info" class="muted">—</div><div class="pagination" id="pagination"></div></div>
   </div>
 </main>
-
-<footer>
-  Dibangun dari data <b>Pisah_Asal_Daerah_dengan_Provinsi (6).xlsx</b> — Jejak Inovasi, Dashboard Alumni Pelatihan LAN<br>
-  Tutorial deploy ke Netlify tersedia di file PDF <b>Tutorial_Deploy_Netlify.pdf</b>
-</footer>
-
+<footer>Dibangun dari data Pisah_Asal_Daerah_dengan_Provinsi (6).xlsx — Jejak Inovasi, Dashboard Alumni Pelatihan LAN</footer>
 <div class="toast" id="toast"></div>
-
 <script>
-let DATA = null;
-let filtered = [];
-let page = 1;
-const PAGE_SIZE = 25;
-const charts = {};
-
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 1800);
-}
-
+let DATA = null; let filtered = []; let page = 1;
+const PAGE_SIZE = 25; const charts = {};
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
 async function loadData(){
-  try{
-    const res = await fetch('data.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('no fetch');
-    DATA = await res.json();
-  }catch(e){
-    if(window.__EMBEDDED_DATA__){ DATA = window.__EMBEDDED_DATA__; }
-    else {
-      document.body.insertAdjacentHTML('afterbegin',
-        '<div class="empty">Gagal memuat data.json. Buka lewat server atau gunakan versi embedded.</div>');
-      return;
-    }
-  }
-  initFilters();
-  initLegend();
-  applyFilter();
+  try{ const res = await fetch('data.json', {cache:'no-store'}); if(!res.ok) throw new Error('no fetch'); DATA = await res.json(); }
+  catch(e){ document.body.insertAdjacentHTML('afterbegin','<div class="empty">Gagal memuat data.json. Pastikan file data.json ada di folder yang sama.</div>'); return; }
+  initFilters(); initLegend(); applyFilter();
 }
-
 function initFilters(){
   const stats = DATA.stats;
   const provSel = document.getElementById('f-prov');
-  // Tampilkan SEMUA provinsi (34) di dropdown, urut abjad, dengan jumlah karya
   const allProv = (stats.all_provinsi_count || []).slice().sort((a,b)=>a.label.localeCompare(b.label));
-  allProv.forEach(p=>{
-    if(p.label && p.label !== '-'){
-      const o = document.createElement('option');
-      o.value = p.label; o.textContent = `${p.label} (${p.value})`;
-      provSel.appendChild(o);
-    }
-  });
+  allProv.forEach(p=>{ if(p.label && p.label !== '-'){ const o = document.createElement('option'); o.value = p.label; o.textContent = `${p.label} (${p.value})`; provSel.appendChild(o); } });
   const thSel = document.getElementById('f-tahun');
-  stats.top_tahun.filter(t=>t.label).sort((a,b)=>a.label.localeCompare(b.label)).forEach(t=>{
-    const o = document.createElement('option');
-    o.value = t.label; o.textContent = t.label;
-    thSel.appendChild(o);
-  });
+  stats.top_tahun.filter(t=>t.label).sort((a,b)=>a.label.localeCompare(b.label)).forEach(t=>{ const o = document.createElement('option'); o.value = t.label; o.textContent = t.label; thSel.appendChild(o); });
   const bidSel = document.getElementById('f-bidang');
-  stats.bidang_inovasi.forEach(b=>{
-    if(b.label && b.label !== '-'){
-      const o = document.createElement('option');
-      o.value = b.label; o.textContent = `${b.label} (${b.value})`;
-      bidSel.appendChild(o);
-    }
-  });
-  // Program Prioritas dropdown
+  stats.bidang_inovasi.forEach(b=>{ if(b.label && b.label !== '-'){ const o = document.createElement('option'); o.value = b.label; o.textContent = `${b.label} (${b.value})`; bidSel.appendChild(o); } });
   const priSel = document.getElementById('f-prioritas');
-  stats.prioritas.forEach(p=>{
-    const o = document.createElement('option');
-    o.value = p.label;
-    o.textContent = `${p.label} — ${p.nama} (${p.value})`;
-    priSel.appendChild(o);
-  });
-  // Administrasi Negara dropdown
+  stats.prioritas.forEach(p=>{ const o = document.createElement('option'); o.value = p.label; o.textContent = `${p.label} — ${p.nama} (${p.value})`; priSel.appendChild(o); });
   const admSel = document.getElementById('f-adm');
-  stats.administrasi_negara.forEach(a=>{
-    const o = document.createElement('option');
-    o.value = a.label;
-    o.textContent = `${a.label} (${a.value})`;
-    admSel.appendChild(o);
-  });
-
+  stats.administrasi_negara.forEach(a=>{ const o = document.createElement('option'); o.value = a.label; o.textContent = `${a.label} (${a.value})`; admSel.appendChild(o); });
   document.getElementById('hdr-total').textContent = stats.total.toLocaleString('id-ID');
   document.getElementById('hdr-periode').textContent = `${stats.tahun_min}–${stats.tahun_max}`;
   document.getElementById('hdr-prov').textContent = stats.total_provinsi;
 }
-
 function initLegend(){
   const grid = document.getElementById('legend-grid');
-  grid.innerHTML = DATA.stats.prioritas_desc.map(p=>`
-    <div class="legend-item">
-      <span class="legend-no">${p.no}</span>
-      <div>
-        <div class="lname">${p.nama}</div>
-        <div class="ldesc">${p.singkat}</div>
-      </div>
-    </div>`).join('');
+  grid.innerHTML = DATA.stats.prioritas_desc.map(p=>`<div class="legend-item"><span class="legend-no">${p.no}</span><div><div class="lname">${p.nama}</div><div class="ldesc">${p.singkat}</div></div></div>`).join('');
 }
-
 function applyFilter(){
   const q = document.getElementById('f-search').value.trim().toLowerCase();
   const prov = document.getElementById('f-prov').value;
@@ -445,346 +258,133 @@ function applyFilter(){
   const pri = document.getElementById('f-prioritas').value;
   const adm = document.getElementById('f-adm').value;
   const bid = document.getElementById('f-bidang').value;
-
+  const hanyaTerbaik = document.getElementById('f-terbaik').checked;
   filtered = DATA.records.filter(r=>{
+    if(hanyaTerbaik && !r.is_terbaik) return false;
     if(q && !(r.nama.toLowerCase().includes(q) || r.judul.toLowerCase().includes(q))) return false;
     if(prov && r.provinsi !== prov) return false;
     if(tahun && r.tahun !== tahun) return false;
     if(kat && r.kategori !== kat) return false;
     if(pri && r.prioritas_singkat !== pri) return false;
-    if(adm && r.administrasi_negara !== adm) return false;
+    if(adm && r.bidang_adm !== adm) return false;
     if(bid && r.bidang_inovasi !== bid) return false;
     return true;
   });
-  page = 1;
-  renderKPI();
-  renderCharts();
-  renderMap();
-  renderTable();
+  page = 1; renderKPI(); renderCharts(); renderMap(); renderTable();
 }
-
-// ━━━ PETA SEBARAN PROVINSI (ECharts choropleth) ━━━
-let mapChart = null;
-let mapGeoLoaded = false;
-
-// Daftar kemungkinan lokasi file geojson (fallback agar jalan di berbagai struktur folder)
-const GEO_PATHS = [
-  'assets/indonesia-province.geojson',
-  'indonesia-province.geojson',
-  './assets/indonesia-province.geojson',
-  './indonesia-province.geojson',
-];
-
+let mapChart = null; let mapGeoLoaded = false;
+const GEO_PATHS = ['assets/indonesia-province.geojson','indonesia-province.geojson','./assets/indonesia-province.geojson','./indonesia-province.geojson'];
 async function ensureMapGeo(){
   if(mapGeoLoaded) return true;
   let lastErr = null;
   for(const path of GEO_PATHS){
-    try{
-      const res = await fetch(path, {cache:'force-cache'});
-      if(!res.ok){ lastErr = new Error(path+' HTTP '+res.status); continue; }
+    try{ const res = await fetch(path, {cache:'force-cache'}); if(!res.ok){ lastErr = new Error(path+' HTTP '+res.status); continue; }
       const geo = await res.json();
-      if(!geo || !geo.features || !geo.features.length){
-        lastErr = new Error(path+' format geojson invalid'); continue;
-      }
-      echarts.registerMap('ID_PROV', geo);
-      mapGeoLoaded = true;
-      console.info('GeoJSON peta termuat dari:', path);
-      return true;
-    }catch(e){
-      lastErr = e;
-      continue;
-    }
+      if(!geo || !geo.features || !geo.features.length){ lastErr = new Error(path+' invalid'); continue; }
+      echarts.registerMap('ID_PROV', geo); mapGeoLoaded = true; return true;
+    }catch(e){ lastErr = e; continue; }
   }
-  console.warn('Gagal memuat GeoJSON peta dari semua path. Error terakhir:', lastErr);
   return false;
 }
-
 async function renderMap(){
   const ok = await ensureMapGeo();
-  if(!ok){
-    document.getElementById('map-box').innerHTML =
-      '<div class="empty">Gagal memuat peta. Pastikan file <b>indonesia-province.geojson</b> tersedia ' +
-      '(boleh di folder <b>assets/</b> atau di folder utama dashboard).</div>';
-    document.getElementById('map-stats').innerHTML = '';
-    return;
-  }
-
-  // Hitung jumlah karya per provinsi (uppercase) dari data terfilter
+  if(!ok){ document.getElementById('map-box').innerHTML = '<div class="empty">Gagal memuat peta. Pastikan file <b>indonesia-province.geojson</b> tersedia (boleh di folder <b>assets/</b> atau di folder utama).</div>'; document.getElementById('map-stats').innerHTML = ''; return; }
   const cnt = {};
-  filtered.forEach(r=>{
-    if(r.prov_upper){
-      cnt[r.prov_upper] = (cnt[r.prov_upper]||0)+1;
-    }
-  });
+  filtered.forEach(r=>{ if(r.prov_upper){ cnt[r.prov_upper] = (cnt[r.prov_upper]||0)+1; } });
   const data = Object.entries(cnt).map(([name,value])=>({name, value}));
-
-  // Stats ringkas
   const total = filtered.length;
-  const withProv = Object.values(cnt).reduce((a,b)=>a+b,0);
   const topProv = data.sort((a,b)=>b.value-a.value)[0];
   const stats = document.getElementById('map-stats');
-  stats.innerHTML = `
-    <span class="ms-pill">Total karya: <b>${total.toLocaleString('id-ID')}</b></span>
-    <span class="ms-pill">Provinsi terjangkau: <b>${data.length} / 34</b></span>
-    <span class="ms-pill">Provinsi terbanyak: <b>${topProv ? topProv.name : '—'} (${topProv ? topProv.value : 0})</b></span>
-  `;
-
+  stats.innerHTML = `<span class="ms-pill">Total karya: <b>${total.toLocaleString('id-ID')}</b></span><span class="ms-pill">Provinsi terjangkau: <b>${data.length} / 34</b></span><span class="ms-pill">Provinsi terbanyak: <b>${topProv ? topProv.name : '—'} (${topProv ? topProv.value : 0})</b></span>`;
   const maxVal = Math.max(1, ...data.map(d=>d.value));
-
   if(mapChart){ mapChart.dispose(); }
   mapChart = echarts.init(document.getElementById('map-box'));
-
   const option = {
-    tooltip:{
-      trigger:'item',
-      formatter: p => {
-        const v = p.value || 0;
-        const namaTitle = toTitleCase(p.name);
-        return `<div style="font-weight:700;font-size:13px;color:#fff;margin-bottom:4px;border-bottom:1px solid #334155;padding-bottom:4px">${namaTitle}</div>
-                <div style="color:#cbd5e1;font-size:12px;margin-top:2px">Karya inovasi: <b style="color:#fbbf24;font-size:14px">${v}</b></div>`;
-      },
+    tooltip:{ trigger:'item',
+      formatter: p => { const v = p.value || 0; const namaTitle = toTitleCase(p.name);
+        return `<div style="font-weight:700;font-size:13px;color:#fff;margin-bottom:4px;border-bottom:1px solid #334155;padding-bottom:4px">${namaTitle}</div><div style="color:#cbd5e1;font-size:12px;margin-top:2px">Karya inovasi: <b style="color:#fbbf24;font-size:14px">${v}</b></div>`; },
       backgroundColor:'#0f172a', borderColor:'#0f172a', textStyle:{color:'#fff', fontSize:12},
       padding:12, extraCssText:'box-shadow:0 4px 12px rgba(0,0,0,.4);border-radius:8px;'
     },
-    visualMap:{
-      type:'continuous', min:0, max:maxVal,
-      left:18, bottom:18,
-      text:['Banyak','Sedikit'],
+    visualMap:{ type:'continuous', min:0, max:maxVal, left:18, bottom:18, text:['Banyak','Sedikit'],
       textStyle:{color:'#0f172a', fontSize:11, fontWeight:600},
-      inRange:{color:['#dbeafe','#93c5fd','#3b82f6','#1d4ed8','#1e3a8a']},
-      calculable:true,
-      itemWidth:14, itemHeight:90
-    },
-    series:[{
-      name:'Karya Inovasi',
-      type:'map',
-      map:'ID_PROV',
-      roam:true,
-      scaleLimit:{min:1, max:6},
-      label:{show:false},
-      emphasis:{
-        label:{show:true, color:'#fff', fontWeight:600, fontSize:11},
-        itemStyle:{areaColor:'#f59e0b', borderColor:'#fff', borderWidth:1.5}
-      },
-      select:{
-        label:{show:true, color:'#fff', fontWeight:700},
-        itemStyle:{areaColor:'#0ea5e9', borderColor:'#fff', borderWidth:2},
-        disabled:false
-      },
-      itemStyle:{borderColor:'#cbd5e1', borderWidth:.5, areaColor:'#e2e8f0'},
-      data: data
-    }]
+      inRange:{color:['#dbeafe','#93c5fd','#3b82f6','#1d4ed8','#1e3a8a']}, calculable:true, itemWidth:14, itemHeight:90 },
+    series:[{ name:'Karya Inovasi', type:'map', map:'ID_PROV', roam:true, scaleLimit:{min:1, max:6}, label:{show:false},
+      emphasis:{ label:{show:true, color:'#fff', fontWeight:600, fontSize:11}, itemStyle:{areaColor:'#f59e0b', borderColor:'#fff', borderWidth:1.5} },
+      select:{ label:{show:true, color:'#fff', fontWeight:700}, itemStyle:{areaColor:'#0ea5e9', borderColor:'#fff', borderWidth:2}, disabled:false },
+      itemStyle:{borderColor:'#cbd5e1', borderWidth:.5, areaColor:'#e2e8f0'}, data: data }]
   };
   mapChart.setOption(option);
-
-  // Klik provinsi → filter tabel & dropdown provinsi
   mapChart.off('click');
-  mapChart.on('click', params => {
-    if(!params.name) return;
-    const namaTitle = toTitleCase(params.name);
-    // cek apakah nama ada di dropdown provinsi (Title Case)
-    const sel = document.getElementById('f-prov');
-    let matched = null;
-    Array.from(sel.options).forEach(o=>{
-      if(o.value === namaTitle) matched = namaTitle;
-    });
-    if(matched){
-      sel.value = matched;
-      applyFilter();
-      toast(`Difilter: ${namaTitle}`);
-    } else {
-      toast(`${namaTitle}: tidak ada di data`);
-    }
+  mapChart.on('click', params => { if(!params.name) return; const namaTitle = toTitleCase(params.name);
+    const sel = document.getElementById('f-prov'); let matched = null;
+    Array.from(sel.options).forEach(o=>{ if(o.value === namaTitle) matched = namaTitle; });
+    if(matched){ sel.value = matched; applyFilter(); toast(`Difilter: ${namaTitle}`); } else { toast(`${namaTitle}: tidak ada di data`); }
   });
 }
-
-function toTitleCase(s){
-  if(!s) return '';
-  return s.toLowerCase().split(' ').map(w=>{
-    if(w === 'dki') return 'DKI';
-    if(w === 'i') return 'I';
-    return w.charAt(0).toUpperCase() + w.slice(1);
-  }).join(' ');
-}
-
+function toTitleCase(s){ if(!s) return ''; return s.toLowerCase().split(' ').map(w=>{ if(w === 'dki') return 'DKI'; return w.charAt(0).toUpperCase() + w.slice(1); }).join(' '); }
 function renderKPI(){
   const n = filtered.length;
   const provSet = new Set(filtered.map(r=>r.provinsi).filter(p=>p && p !== '-'));
-  const thSet = new Set(filtered.map(r=>r.tahun).filter(t=>t));
   const pemda = filtered.filter(r=>r.kategori === 'Pemda').length;
   const kl = filtered.filter(r=>r.kategori === 'K/L').length;
-  const priorSet = new Set(filtered.map(r=>r.prioritas_singkat).filter(p=>p && p !== 'Tidak Ada'));
-
-  // Instansi unik (case-insensitive) dari data terfilter
   const instSetPemda = new Set(filtered.filter(r=>r.kategori==='Pemda').map(r=>(r.asal_instansi||'').trim().toLowerCase()).filter(s=>s && s!=='-'));
   const instSetKL = new Set(filtered.filter(r=>r.kategori==='K/L').map(r=>(r.asal_instansi||'').trim().toLowerCase()).filter(s=>s && s!=='-'));
   const instAll = new Set([...instSetPemda, ...instSetKL]);
-
+  const terbaikCount = filtered.filter(r=>r.is_terbaik).length;
+  const totalInstansiUnik = DATA.stats.total_instansi_unik || instAll.size;
+  const totalTerbaik = DATA.stats.total_terbaik || 0;
   const kpis = [
     {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
-    {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
-    {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
-    {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
+    {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${totalInstansiUnik.toLocaleString('id-ID')} total instansi`},
+    {cls:'k3 terbaik', label:'Peserta Terbaik', value:terbaikCount.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} peserta berperingkat`},
+    {cls:'k4', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
+    {cls:'k5', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
   ];
-  document.getElementById('kpis').innerHTML = kpis.map(k=>`
-    <div class="kpi ${k.cls}">
-      <div class="label">${k.label}</div>
-      <div class="value">${k.value}</div>
-      <div class="sub">${k.sub}</div>
-    </div>`).join('');
+  document.getElementById('kpis').innerHTML = kpis.map(k=>`<div class="kpi ${k.cls}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
 }
-
 const PALETTE = ['#1d4ed8','#0ea5e9','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#06b6d4'];
-
-function destroyChart(id){
-  if(charts[id]){ charts[id].destroy(); delete charts[id]; }
-}
-
+function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
 function renderCharts(){
-  Chart.defaults.font.family = "'Segoe UI', Roboto, sans-serif";
-  Chart.defaults.color = '#475569';
-
-  const tahunCount = {};
-  const katCount = {Pemda:0, 'K/L':0};
-  const provCount = {};
-  const bidangCount = {};
-  const priorCount = {};
-  const admCount = {};
+  Chart.defaults.font.family = "'Segoe UI', Roboto, sans-serif"; Chart.defaults.color = '#475569';
+  const tahunCount = {}; const katCount = {Pemda:0, 'K/L':0}; const provCount = {}; const bidangCount = {}; const priorCount = {}; const admCount = {};
   filtered.forEach(r=>{
     if(r.tahun) tahunCount[r.tahun] = (tahunCount[r.tahun]||0)+1;
     if(r.kategori) katCount[r.kategori] = (katCount[r.kategori]||0)+1;
-    if(r.provinsi && r.provinsi !== '-'){
-      provCount[r.provinsi] = (provCount[r.provinsi]||0)+1;
-    }
+    if(r.provinsi && r.provinsi !== '-') provCount[r.provinsi] = (provCount[r.provinsi]||0)+1;
     if(r.bidang_inovasi && r.bidang_inovasi !== '-') bidangCount[r.bidang_inovasi] = (bidangCount[r.bidang_inovasi]||0)+1;
     if(r.prioritas_singkat) priorCount[r.prioritas_singkat] = (priorCount[r.prioritas_singkat]||0)+1;
-    if(r.administrasi_negara) admCount[r.administrasi_negara] = (admCount[r.administrasi_negara]||0)+1;
+    if(r.bidang_adm) admCount[r.bidang_adm] = (admCount[r.bidang_adm]||0)+1;
   });
-
-  // 1. Tren per tahun (line)
   const thSorted = Object.keys(tahunCount).sort();
   destroyChart('c-tren');
-  charts['c-tren'] = new Chart(document.getElementById('c-tren'), {
-    type:'line',
-    data:{
-      labels: thSorted,
-      datasets:[{
-        label:'Jumlah Karya',
-        data: thSorted.map(t=>tahunCount[t]),
-        borderColor:'#1d4ed8', backgroundColor:'rgba(29,78,216,.15)',
-        fill:true, tension:.35, pointRadius:4, pointBackgroundColor:'#1d4ed8', borderWidth:2
-      }]
-    },
-    options: chartOpts({legend:false, yInt:true})
-  });
-
-  // 2. Kategori (doughnut)
+  charts['c-tren'] = new Chart(document.getElementById('c-tren'), { type:'line', data:{ labels: thSorted, datasets:[{ label:'Jumlah Karya', data: thSorted.map(t=>tahunCount[t]), borderColor:'#1d4ed8', backgroundColor:'rgba(29,78,216,.15)', fill:true, tension:.35, pointRadius:4, pointBackgroundColor:'#1d4ed8', borderWidth:2 }] }, options: chartOpts({legend:false, yInt:true}) });
   destroyChart('c-kategori');
-  charts['c-kategori'] = new Chart(document.getElementById('c-kategori'), {
-    type:'doughnut',
-    data:{
-      labels:Object.keys(katCount),
-      datasets:[{
-        data:Object.values(katCount),
-        backgroundColor:['#1d4ed8','#f59e0b'],
-        borderWidth:2, borderColor:'#fff'
-      }]
-    },
-    options: chartOpts({legend:true, doughnut:true})
-  });
-
-  // 3. Top 12 provinsi (bar horizontal)
+  charts['c-kategori'] = new Chart(document.getElementById('c-kategori'), { type:'doughnut', data:{ labels:Object.keys(katCount), datasets:[{ data:Object.values(katCount), backgroundColor:['#1d4ed8','#f59e0b'], borderWidth:2, borderColor:'#fff' }] }, options: chartOpts({legend:true, doughnut:true}) });
   const provTop = Object.entries(provCount).sort((a,b)=>b[1]-a[1]).slice(0,12).reverse();
   destroyChart('c-prov');
-  charts['c-prov'] = new Chart(document.getElementById('c-prov'), {
-    type:'bar',
-    data:{
-      labels: provTop.map(p=>p[0]),
-      datasets:[{
-        label:'Jumlah Karya',
-        data: provTop.map(p=>p[1]),
-        backgroundColor:'#0ea5e9', borderRadius:6
-      }]
-    },
-    options: chartOpts({legend:false, indexAxis:'y'})
-  });
-
-  // 4. Top bidang inovasi (bar horizontal)
+  charts['c-prov'] = new Chart(document.getElementById('c-prov'), { type:'bar', data:{ labels: provTop.map(p=>p[0]), datasets:[{ label:'Jumlah Karya', data: provTop.map(p=>p[1]), backgroundColor:'#0ea5e9', borderRadius:6 }] }, options: chartOpts({legend:false, indexAxis:'y'}) });
   const bidTop = Object.entries(bidangCount).sort((a,b)=>b[1]-a[1]).slice(0,10).reverse();
   destroyChart('c-bidang');
-  charts['c-bidang'] = new Chart(document.getElementById('c-bidang'), {
-    type:'bar',
-    data:{
-      labels: bidTop.map(p=>p[0]),
-      datasets:[{
-        label:'Jumlah Karya',
-        data: bidTop.map(p=>p[1]),
-        backgroundColor: bidTop.map((_,i)=>PALETTE[i%PALETTE.length]),
-        borderRadius:6
-      }]
-    },
-    options: chartOpts({legend:false, indexAxis:'y'})
-  });
-
-  // 5. Program Prioritas (bar vertikal, urut sesuai nomor 1-8)
+  charts['c-bidang'] = new Chart(document.getElementById('c-bidang'), { type:'bar', data:{ labels: bidTop.map(p=>p[0]), datasets:[{ label:'Jumlah Karya', data: bidTop.map(p=>p[1]), backgroundColor: bidTop.map((_,i)=>PALETTE[i%PALETTE.length]), borderRadius:6 }] }, options: chartOpts({legend:false, indexAxis:'y'}) });
   const priorDesc = DATA.stats.prioritas_desc;
   const priorLabels = priorDesc.map(p=>p.singkat);
   const priorData = priorLabels.map(l=>priorCount[l]||0);
   destroyChart('c-prioritas');
-  charts['c-prioritas'] = new Chart(document.getElementById('c-prioritas'), {
-    type:'bar',
-    data:{
-      labels: priorLabels,
-      datasets:[{
-        label:'Jumlah Karya',
-        data: priorData,
-        backgroundColor: priorDesc.map((_,i)=>PALETTE[i%PALETTE.length]),
-        borderRadius:6
-      }]
-    },
-    options: chartOpts({legend:false, yInt:true, xRot:true})
-  });
-
-  // 6. Bidang Administrasi Negara (doughnut)
+  charts['c-prioritas'] = new Chart(document.getElementById('c-prioritas'), { type:'bar', data:{ labels: priorLabels, datasets:[{ label:'Jumlah Karya', data: priorData, backgroundColor: priorDesc.map((_,i)=>PALETTE[i%PALETTE.length]), borderRadius:6 }] }, options: chartOpts({legend:false, yInt:true, xRot:true}) });
   const admTop = Object.entries(admCount).sort((a,b)=>b[1]-a[1]);
   destroyChart('c-adm');
-  charts['c-adm'] = new Chart(document.getElementById('c-adm'), {
-    type:'doughnut',
-    data:{
-      labels: admTop.map(p=>p[0]),
-      datasets:[{
-        data: admTop.map(p=>p[1]),
-        backgroundColor:['#1d4ed8','#0ea5e9','#f59e0b','#10b981'].slice(0, admTop.length),
-        borderWidth:2, borderColor:'#fff'
-      }]
-    },
-    options: chartOpts({legend:true, doughnut:true})
-  });
+  charts['c-adm'] = new Chart(document.getElementById('c-adm'), { type:'doughnut', data:{ labels: admTop.map(p=>p[0]), datasets:[{ data: admTop.map(p=>p[1]), backgroundColor:['#1d4ed8','#0ea5e9','#f59e0b','#10b981'].slice(0, admTop.length), borderWidth:2, borderColor:'#fff' }] }, options: chartOpts({legend:true, doughnut:true}) });
 }
-
 function chartOpts(o={}){
-  const opts = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{
-      legend:{display:o.legend||false, position:'bottom', labels:{usePointStyle:true, padding:14, font:{size:11.5}}},
-      tooltip:{backgroundColor:'#0f172a', padding:10, cornerRadius:8, titleFont:{size:12}, bodyFont:{size:12}}
-    },
-    scales:{
-      x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, maxRotation:o.xRot?45:0, minRotation:o.xRot?45:0, autoSkip:false}},
-      y:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}}
-    }
-  };
-  if(o.indexAxis === 'y'){
-    opts.scales = {
-      x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}, stacked:o.stacked||false},
-      y:{grid:{display:false, drawBorder:false}, ticks:{font:{size:11}}, stacked:o.stacked||false}
-    };
-  }
+  const opts = { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:o.legend||false, position:'bottom', labels:{usePointStyle:true, padding:14, font:{size:11.5}}}, tooltip:{backgroundColor:'#0f172a', padding:10, cornerRadius:8, titleFont:{size:12}, bodyFont:{size:12}} },
+    scales:{ x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, maxRotation:o.xRot?45:0, minRotation:o.xRot?45:0, autoSkip:false}}, y:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}} } };
+  if(o.indexAxis === 'y'){ opts.scales = { x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}, stacked:o.stacked||false}, y:{grid:{display:false, drawBorder:false}, ticks:{font:{size:11}}, stacked:o.stacked||false} }; }
   if(o.doughnut){ opts.scales = {}; opts.cutout = '62%'; }
   if(o.yInt){ opts.scales.y.ticks.precision = 0; }
   return opts;
 }
-
 function renderTable(){
   const tbody = document.getElementById('tbody');
   const total = filtered.length;
@@ -792,73 +392,42 @@ function renderTable(){
   if(page > pages) page = pages;
   const start = (page-1)*PAGE_SIZE;
   const slice = filtered.slice(start, start+PAGE_SIZE);
-
   if(slice.length === 0){
     tbody.innerHTML = `<tr><td colspan="8" class="empty">Tidak ada data yang cocok dengan filter.</td></tr>`;
   } else {
     tbody.innerHTML = slice.map((r,i)=>{
       const no = start+i+1;
       const katCls = r.kategori === 'Pemda' ? 'pemda' : (r.kategori === 'K/L' ? 'kl' : '');
-      const daerah = [r.asal_daerah, r.provinsi].filter(Boolean).join(', ');
-      const judulHtml = r.link
-        ? `<a class="link" href="${r.link}" target="_blank" rel="noopener">${escapeHtml(r.judul)}</a>`
-        : escapeHtml(r.judul);
       const priorHtml = r.prioritas_singkat && r.prioritas_singkat !== 'Tidak Ada'
-        ? `<span class="badge prior" title="${escapeHtml(r.prioritas_nama||'')}">${escapeHtml(r.prioritas_singkat)}</span>`
+        ? `<span class="badge prior">${escapeHtml(r.prioritas_singkat)}</span>`
         : '<span class="muted">—</span>';
-      return `<tr>
-        <td class="muted">${no}</td>
-        <td class="nama">${escapeHtml(r.nama)}</td>
-        <td class="judul">${judulHtml}<small>${escapeHtml(r.jenis_diklat||'')}</small></td>
-        <td class="muted">${escapeHtml(daerah)}</td>
-        <td>${r.kategori ? `<span class="badge ${katCls}">${r.kategori}</span>` : '<span class="muted">—</span>'}</td>
-        <td class="muted">${r.tahun || '—'}</td>
-        <td>${priorHtml}</td>
-        <td>${r.bidang_inovasi && r.bidang_inovasi !== '-' ? `<span class="badge bidang">${escapeHtml(r.bidang_inovasi)}</span>` : '<span class="muted">—</span>'}</td>
-      </tr>`;
+      const trCls = r.is_terbaik ? 'terbaik' : '';
+      const namaBadge = r.is_terbaik
+        ? `${escapeHtml(r.nama)} <span class="badge terbaik" title="Peserta Terbaik dalam pelatihan">Terbaik</span>`
+        : escapeHtml(r.nama);
+      return `<tr class="${trCls}"><td class="muted">${no}</td><td class="nama">${namaBadge}</td><td class="judul">${escapeHtml(r.judul)}</td><td class="muted">${escapeHtml(r.provinsi||'')}</td><td>${r.kategori ? `<span class="badge ${katCls}">${r.kategori}</span>` : '<span class="muted">—</span>'}</td><td class="muted">${r.tahun || '—'}</td><td>${priorHtml}</td><td>${r.bidang_inovasi && r.bidang_inovasi !== '-' ? `<span class="badge bidang">${escapeHtml(r.bidang_inovasi)}</span>` : '<span class="muted">—</span>'}</td></tr>`;
     }).join('');
   }
-
-  document.getElementById('tbl-info').textContent =
-    `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`;
-
+  document.getElementById('tbl-info').textContent = `Menampilkan ${slice.length} dari ${total} karya • Halaman ${page} / ${pages}`;
   const pag = document.getElementById('pagination');
-  let btns = '';
-  btns += `<button ${page===1?'disabled':''} data-p="${page-1}">‹ Prev</button>`;
+  let btns = `<button ${page===1?'disabled':''} data-p="${page-1}">‹ Prev</button>`;
   let from = Math.max(1, page-3), to = Math.min(pages, from+6);
   if(to-from < 6) from = Math.max(1, to-6);
-  for(let p=from; p<=to; p++){
-    btns += `<button class="${p===page?'active':''}" data-p="${p}">${p}</button>`;
-  }
+  for(let p=from; p<=to; p++){ btns += `<button class="${p===page?'active':''}" data-p="${p}">${p}</button>`; }
   btns += `<button ${page===pages?'disabled':''} data-p="${page+1}">Next ›</button>`;
   pag.innerHTML = btns;
-  pag.querySelectorAll('button').forEach(b=>{
-    b.onclick = ()=>{
-      const p = parseInt(b.dataset.p);
-      if(p>=1 && p<=pages){ page = p; renderTable(); }
-    };
-  });
+  pag.querySelectorAll('button').forEach(b=>{ b.onclick = ()=>{ const p = parseInt(b.dataset.p); if(p>=1 && p<=pages){ page = p; renderTable(); } }; });
 }
-
-function escapeHtml(s){
-  if(s == null) return '';
-  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>{
+function escapeHtml(s){ if(s == null) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-terbaik'].forEach(id=>{
   const el = document.getElementById(id);
   const ev = id === 'f-search' ? 'input' : 'change';
-  el.addEventListener(ev, ()=>{
-    if(id==='f-search'){ clearTimeout(window._st); window._st = setTimeout(applyFilter, 250); }
-    else applyFilter();
-  });
+  el.addEventListener(ev, ()=>{ if(id==='f-search'){ clearTimeout(window._st); window._st = setTimeout(applyFilter, 250); } else applyFilter(); });
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
   ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang'].forEach(id=>document.getElementById(id).value='');
-  applyFilter();
-  toast('Filter direset');
+  document.getElementById('f-terbaik').checked = false; applyFilter(); toast('Filter direset');
 });
-
 loadData();
 </script>
 </body>
