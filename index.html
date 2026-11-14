@@ -6,6 +6,8 @@
 <title>Jejak Inovasi — Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
   :root{
     --primary:#1d4ed8; --primary-dark:#1e3a8a; --primary-soft:#dbeafe;
@@ -127,6 +129,13 @@
     background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
     box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
+  /* ---------- Tombol "Export PDF" alumni berprestasi ---------- */
+  .btn-export-pdf{
+    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
+    color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;
+    user-select:none;transition:all .12s;white-space:nowrap;
+  }
+  .btn-export-pdf:hover{background:#dbeafe;border-color:#3b82f6;box-shadow:0 3px 10px rgba(59,130,246,.25)}
 
   /* ---------- Cross-badge 🏆 di tabel utama (alumni berprestasi) ---------- */
   table tr.alumni-row{box-shadow:inset 3px 0 0 #10b981}
@@ -312,6 +321,12 @@
         <label>&nbsp;</label>
         <button class="btn-alumni" id="btn-alumni" type="button" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
           🏆 Alumni Berprestasi
+        </button>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh daftar seluruh alumni berprestasi beserta nama penghargaannya sebagai file PDF">
+          ⬇ Export PDF
         </button>
       </div>
       <div class="field">
@@ -1077,6 +1092,139 @@ document.getElementById('btn-alumni').addEventListener('click', ()=>{
     toast('Menampilkan semua karya');
   }
 });
+
+// ---------- Export PDF: daftar Alumni Berprestasi beserta nama penghargaan ----------
+function normPdfLines(s){
+  if(!s) return '';
+  return String(s).replace(/\u00a0/g,' ')
+    .split('\n')
+    .map(t=>t.replace(/^[·•]\s*/,'').trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
+async function exportAlumniPDF(){
+  if(typeof DATA==='undefined' || !DATA || !DATA.records || !DATA.records.length){ toast('Data belum termuat'); return; }
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    toast('Pustaka PDF belum termuat — dibutuhkan koneksi internet saat membuka halaman');
+    return;
+  }
+  toast('Menyusun PDF alumni berprestasi…');
+  const rows = DATA.records.filter(r=>r.prestasi);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'a4'});
+  const PW = doc.internal.pageSize.getWidth();
+  const PH = doc.internal.pageSize.getHeight();
+  const MX = 34;
+
+  // --- Kop: logo LAN (jika termuat) + judul ---
+  let titleX = MX;
+  try{
+    const logo = await new Promise(res=>{
+      const im = new Image();
+      im.onload = ()=>{
+        try{
+          const H = 58, W = Math.min(140, Math.round(im.width*H/im.height));
+          const c = document.createElement('canvas');
+          c.width=W; c.height=H;
+          c.getContext('2d').drawImage(im,0,0,W,H);
+          res({d:c.toDataURL('image/png'), w:W, h:H});
+        }catch(e){ res(null); }
+      };
+      im.onerror = ()=>res(null);
+      im.src = 'logo-lan.png';
+    });
+    if(logo){ doc.addImage(logo.d,'PNG',MX,26,logo.w,logo.h); titleX = MX + logo.w + 14; }
+  }catch(e){ /* tanpa logo, lanjut saja */ }
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(30,41,59);
+  doc.text('JEJAK INOVASI', titleX, 44);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(71,85,105);
+  doc.text('Alumni Berprestasi Pelatihan Kepemimpinan \u2014 beserta Nama Penghargaan', titleX, 60);
+  doc.setFontSize(8.5); doc.setTextColor(100,116,139);
+  doc.text('Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI', titleX, 74);
+  doc.setDrawColor(30,64,175); doc.setLineWidth(1.2);
+  doc.line(MX, 90, PW-MX, 90);
+
+  const tgl = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  doc.setFontSize(9); doc.setTextColor(51,65,85);
+  doc.text(`Total: ${rows.length} alumni berprestasi (seluruh data)  \u2022  Diunduh: ${tgl}`, MX, 107);
+
+  const body = rows.map((r,i)=>[
+    String(i+1),
+    r.nama || '',
+    normPdfLines(r.prestasi),
+    String(r.tahun || ''),
+    r.provinsi || '',
+    r.asal_instansi || '',
+    normPdfLines(r.sumber_berita) || ''
+  ]);
+
+  doc.autoTable({
+    startY: 120,
+    head: [['No','Nama','Penghargaan','Tahun','Provinsi','Instansi','Sumber']],
+    body: body,
+    margin:{left:MX, right:MX, top:44},
+    styles:{font:'helvetica', fontSize:8, cellPadding:4, lineColor:[226,232,240], lineWidth:.5, textColor:[30,41,59], valign:'top'},
+    headStyles:{fillColor:[30,64,175], textColor:255, fontStyle:'bold', fontSize:8.5, halign:'center'},
+    alternateRowStyles:{fillColor:[248,250,252]},
+    columnStyles:{
+      0:{cellWidth:20, halign:'center'},
+      1:{cellWidth:78, fontStyle:'bold'},
+      2:{cellWidth:178},
+      3:{cellWidth:34, halign:'center'},
+      4:{cellWidth:72},
+      5:{cellWidth:86},
+      6:{cellWidth:42}
+    },
+    didParseCell:(d)=>{
+      // tinggi baris dihitung dari label pendek, bukan URL panjang
+      if(d.section==='body' && d.column.index===6){
+        const raw = String((d.cell && d.cell.raw) || '');
+        const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
+        d.cell.text = urls.length>1 ? urls.map((_,ix)=>`Buka ${ix+1}`) : (urls.length ? ['Buka'] : ['-']);
+      }
+    },
+    willDrawCell:(d)=>{
+      // kolom Sumber digambar manual agar tautannya klik-able
+      if(d.section==='body' && d.column.index===6){ d.cell.text = []; }
+    },
+    didDrawCell:(d)=>{
+      if(d.section!=='body' || d.column.index!==6) return;
+      const raw = String((d.cell && d.cell.raw) || '');
+      const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(29,78,216);
+      if(!urls.length){
+        doc.setTextColor(148,163,184);
+        doc.text('-', d.cell.x+d.cell.width/2, d.cell.y+4.5, {align:'center'});
+        return;
+      }
+      let yy = d.cell.y + 4.5;
+      urls.forEach((u,ix)=>{
+        const label = urls.length>1 ? `Buka ${ix+1}` : 'Buka';
+        doc.textWithLink(label, d.cell.x+4, yy, {url:u});
+        yy += 9.5;
+      });
+    }
+  });
+
+  // --- Footer tiap halaman ---
+  const pages = doc.getNumberOfPages();
+  for(let p=1; p<=pages; p++){
+    doc.setPage(p);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(148,163,184);
+    doc.text('Jejak Inovasi \u2014 Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI', MX, PH-16);
+    doc.text(`Halaman ${p} dari ${pages}`, PW-MX, PH-16, {align:'right'});
+  }
+
+  window.__lastAlumniPdf = doc;
+  const fname = `Alumni-Berprestasi-Jejak-Inovasi-${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(fname);
+  toast(`PDF berhasil dibuat: ${rows.length} alumni berprestasi (${pages} halaman)`);
+}
+
+// Tombol "⬇ Export PDF" — unduh daftar alumni berprestasi (dengan nama penghargaan)
+document.getElementById('btn-alumni-pdf').addEventListener('click', exportAlumniPDF);
 
 loadData();
 </script>
