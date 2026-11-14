@@ -367,9 +367,9 @@
       <div class="chart-box tall"><canvas id="c-prov"></canvas></div>
     </div>
     <div class="card">
-      <h3>Top Bidang Inovasi</h3>
-      <div class="desc">Distribusi karya berdasarkan bidang inovasi</div>
-      <div class="chart-box tall"><canvas id="c-bidang"></canvas></div>
+      <h3>Karya per Bidang Inovasi</h3>
+      <div class="desc">Distribusi karya berdasarkan seluruh kategori bidang inovasi — termasuk Kesehatan, Pertanian, Pemberdayaan Masyarakat, dll.</div>
+      <div class="chart-box" style="height:640px"><canvas id="c-bidang"></canvas></div>
     </div>
   </div>
 
@@ -826,8 +826,8 @@ function renderCharts(){
     options: chartOpts({legend:false, indexAxis:'y'})
   });
 
-  // 3. Top bidang inovasi (bar horizontal)
-  const bidTop = Object.entries(bidangCount).sort((a,b)=>b[1]-a[1]).slice(0,10).reverse();
+  // 3. Semua kategori bidang inovasi (bar horizontal, tanpa dipotong top-10)
+  const bidTop = Object.entries(bidangCount).sort((a,b)=>b[1]-a[1]).reverse();
   destroyChart('c-bidang');
   charts['c-bidang'] = new Chart(document.getElementById('c-bidang'), {
     type:'bar',
@@ -919,6 +919,9 @@ function chartOpts(o={}){
       y:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}}
     }
   };
+  if(o.indexAxis){
+    opts.indexAxis = o.indexAxis;  // teruskan ke Chart.js agar bar benar-benar horizontal
+  }
   if(o.indexAxis === 'y'){
     opts.scales = {
       x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}, stacked:o.stacked||false},
