@@ -1110,7 +1110,10 @@ async function exportAlumniPDF(){
     return;
   }
   toast('Menyusun PDF alumni berprestasi…');
-  const rows = DATA.records.filter(r=>r.prestasi);
+  // urut tahun terbaru → terlama (urutan asli dipakai bila tahun sama)
+  const rows = DATA.records.filter(r=>r.prestasi)
+    .slice()
+    .sort((a,b)=> (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0));
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'pt', format:'a4'});
   const PW = doc.internal.pageSize.getWidth();
@@ -1140,7 +1143,7 @@ async function exportAlumniPDF(){
   doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(30,41,59);
   doc.text('JEJAK INOVASI', titleX, 44);
   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(71,85,105);
-  doc.text('Alumni Berprestasi Pelatihan Kepemimpinan \u2014 beserta Nama Penghargaan', titleX, 60);
+  doc.text('Alumni Berprestasi Pelatihan Kepemimpinan', titleX, 60);
   doc.setFontSize(8.5); doc.setTextColor(100,116,139);
   doc.text('Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI', titleX, 74);
   doc.setDrawColor(30,64,175); doc.setLineWidth(1.2);
@@ -1154,7 +1157,7 @@ async function exportAlumniPDF(){
     String(i+1),
     r.nama || '',
     normPdfLines(r.prestasi),
-    String(r.tahun || ''),
+    [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
     r.provinsi || '',
     r.asal_instansi || '',
     normPdfLines(r.sumber_berita) || ''
@@ -1162,7 +1165,7 @@ async function exportAlumniPDF(){
 
   doc.autoTable({
     startY: 120,
-    head: [['No','Nama','Penghargaan','Tahun','Provinsi','Instansi','Sumber']],
+    head: [['No','Nama','Penghargaan','Diklat','Provinsi','Instansi','Sumber']],
     body: body,
     margin:{left:MX, right:MX, top:44},
     styles:{font:'helvetica', fontSize:8, cellPadding:4, lineColor:[226,232,240], lineWidth:.5, textColor:[30,41,59], valign:'top'},
@@ -1170,11 +1173,11 @@ async function exportAlumniPDF(){
     alternateRowStyles:{fillColor:[248,250,252]},
     columnStyles:{
       0:{cellWidth:20, halign:'center'},
-      1:{cellWidth:78, fontStyle:'bold'},
-      2:{cellWidth:178},
-      3:{cellWidth:34, halign:'center'},
-      4:{cellWidth:72},
-      5:{cellWidth:86},
+      1:{cellWidth:76, fontStyle:'bold'},
+      2:{cellWidth:162},
+      3:{cellWidth:86},
+      4:{cellWidth:64},
+      5:{cellWidth:78},
       6:{cellWidth:42}
     },
     didParseCell:(d)=>{
