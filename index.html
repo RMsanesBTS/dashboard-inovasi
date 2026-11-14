@@ -589,6 +589,7 @@ function applyFilter(){
 // ━━━ PETA SEBARAN PROVINSI (ECharts choropleth) ━━━
 let mapChart = null;
 let mapGeoLoaded = false;
+let mapGeoData = null; // geojson yang sedang terdaftar (untuk hitung provinsi dinamis)
 
 // Daftar kemungkinan lokasi file geojson (fallback agar jalan di berbagai struktur folder)
 const GEO_PATHS = [
@@ -603,13 +604,14 @@ async function ensureMapGeo(){
   let lastErr = null;
   for(const path of GEO_PATHS){
     try{
-      const res = await fetch(path, {cache:'force-cache'});
+      const res = await fetch(path, {cache:'default'});
       if(!res.ok){ lastErr = new Error(path+' HTTP '+res.status); continue; }
       const geo = await res.json();
       if(!geo || !geo.features || !geo.features.length){
         lastErr = new Error(path+' format geojson invalid'); continue;
       }
       echarts.registerMap('ID_PROV', geo);
+      mapGeoData = geo;
       mapGeoLoaded = true;
       console.info('GeoJSON peta termuat dari:', path);
       return true;
@@ -643,13 +645,20 @@ async function renderMap(){
 
   // Stats ringkas
   const total = filtered.length;
-  const withProv = Object.values(cnt).reduce((a,b)=>a+b,0);
   const topProv = data.sort((a,b)=>b.value-a.value)[0];
+  // Provinsi yang benar-benar tampil di peta = punya data DAN geometrinya ada di geojson
+  const mapRegions = new Set((mapGeoData && mapGeoData.features || []).map(f=>{
+    const p = (f.properties||{});
+    return String(p.name || p.Propinsi || p.PROVINSI || '').toUpperCase();
+  }));
+  const provTampil = Object.keys(cnt).filter(n=>mapRegions.has(n));
+  const provTanpaPeta = Object.keys(cnt).filter(n=>!mapRegions.has(n));
   const stats = document.getElementById('map-stats');
   stats.innerHTML = `
     <span class="ms-pill">Total karya: <b>${total.toLocaleString('id-ID')}</b></span>
-    <span class="ms-pill">Provinsi terjangkau: <b>${data.length} / 34</b></span>
+    <span class="ms-pill">Provinsi terjangkau: <b>${provTampil.length} / ${mapRegions.size}</b></span>
     <span class="ms-pill">Provinsi terbanyak: <b>${topProv ? topProv.name : '—'} (${topProv ? topProv.value : 0})</b></span>
+    ${provTanpaPeta.length ? `<span class="ms-pill">${provTanpaPeta.length} provinsi berdata tidak ada di peta: ${provTanpaPeta.join(', ')}</span>` : ''}
   `;
 
   const maxVal = Math.max(1, ...data.map(d=>d.value));
