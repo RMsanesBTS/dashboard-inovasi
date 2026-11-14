@@ -67,7 +67,10 @@
   .btn.ghost:hover{background:#f8fafc}
 
   /* ---------- KPI ---------- */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px}
+  /* KPI: 6 kartu dalam 1 baris; di bawah 1100px → 3 kolom, di bawah 640px → 1 kolom */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,1vw,14px);margin-bottom:20px}
+  @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:640px){.kpis{grid-template-columns:1fr}}
   .kpi{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;
     box-shadow:var(--shadow);position:relative;overflow:hidden;
@@ -85,6 +88,11 @@
   .kpi .label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi .value{font-size:30px;font-weight:800;color:var(--text);line-height:1}
   .kpi .sub{font-size:12px;color:var(--muted);margin-top:6px}
+  /* Ukuran fluid agar 6 kartu tetap rapi dalam 1 baris */
+  .kpi{padding:clamp(12px,1.25vw,18px) clamp(12px,1.4vw,20px)}
+  .kpi .label{font-size:clamp(10px,.82vw,11.5px);margin-bottom:4px}
+  .kpi .value{font-size:clamp(20px,2.05vw,30px)}
+  .kpi .sub{font-size:clamp(10.5px,.87vw,12px);margin-top:4px}
 
   /* ---------- Penanda baris Terbaik di tabel utama ---------- */
   table tr.terbaik-row{background:#fffbeb !important}
@@ -108,11 +116,6 @@
     background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;border-color:#f59e0b;
     box-shadow:0 3px 10px rgba(245,158,11,.4);
   }
-  .btn-terbaik .cnt{
-    background:rgba(146,64,14,.15);color:#92400e;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
-  }
-  .btn-terbaik.active .cnt{background:rgba(255,255,255,.28);color:#fff}
-
   /* ---------- Tombol "Alumni Berprestasi" di search box ---------- */
   .btn-alumni{
     display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
@@ -124,10 +127,6 @@
     background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
     box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
-  .btn-alumni .cnt{
-    background:rgba(6,95,70,.15);color:#065f46;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;
-  }
-  .btn-alumni.active .cnt{background:rgba(255,255,255,.28);color:#fff}
 
   /* ---------- Cross-badge 🏆 di tabel utama (alumni berprestasi) ---------- */
   table tr.alumni-row{box-shadow:inset 3px 0 0 #10b981}
@@ -306,13 +305,13 @@
       <div class="field">
         <label>&nbsp;</label>
         <button class="btn-terbaik" id="btn-terbaik" type="button" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
-          ★ Peserta Terbaik <span class="cnt" id="btn-terbaik-cnt">0</span>
+          ★ Peserta Terbaik
         </button>
       </div>
       <div class="field">
         <label>&nbsp;</label>
         <button class="btn-alumni" id="btn-alumni" type="button" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
-          🏆 Alumni Berprestasi <span class="cnt" id="btn-alumni-cnt">0</span>
+          🏆 Alumni Berprestasi
         </button>
       </div>
       <div class="field">
@@ -353,18 +352,11 @@
     <div class="map-stats" id="map-stats"></div>
   </div>
 
-  <!-- CHART ROW 1 -->
-  <div class="grid cols-2">
-    <div class="card">
-      <h3>Tren Jumlah Karya per Tahun</h3>
-      <div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div>
-      <div class="chart-box tall"><canvas id="c-tren"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Karya per Instansi (Pemda vs K/L)</h3>
-      <div class="desc">Perbandingan kontribusi Pemerintah Daerah dan Kementerian/Lembaga</div>
-      <div class="chart-box tall"><canvas id="c-kategori"></canvas></div>
-    </div>
+  <!-- CHART ROW 1: Tren per tahun (full width; grafik Karya per Instansi dihapus karena sudah tampil di KPI Pemda/K-L) -->
+  <div class="card" style="margin-bottom:20px">
+    <h3>Tren Jumlah Karya per Tahun</h3>
+    <div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div>
+    <div class="chart-box tall"><canvas id="c-tren"></canvas></div>
   </div>
 
   <!-- CHART ROW 2 -->
@@ -583,16 +575,9 @@ function applyFilter(){
   if(onlyAlumniOn)  f = f.filter(r => r.prestasi);
   filtered = f;
   page = 1;
-  // Update tombol "★ Peserta Terbaik" — jumlah karya terbaik dalam filter aktif (pakai baseFiltered, bukan filtered)
-  const terbaikInFilter = baseFiltered.filter(r => r.terbaik).length;
-  const cntEl = document.getElementById('btn-terbaik-cnt');
-  if(cntEl) cntEl.textContent = terbaikInFilter.toLocaleString('id-ID');
+  // Update status aktif tombol toggle (angka tidak ditampilkan di tombol — sudah ada di kartu KPI)
   const btnTerbaik = document.getElementById('btn-terbaik');
   if(btnTerbaik) btnTerbaik.classList.toggle('active', onlyTerbaikOn);
-  // Update tombol "🏆 Alumni Berprestasi" — jumlah alumni dalam filter aktif (pakai baseFiltered)
-  const alumniInFilter = baseFiltered.filter(r => r.prestasi).length;
-  const cntAl = document.getElementById('btn-alumni-cnt');
-  if(cntAl) cntAl.textContent = alumniInFilter.toLocaleString('id-ID');
   const btnAlumni = document.getElementById('btn-alumni');
   if(btnAlumni) btnAlumni.classList.toggle('active', onlyAlumniOn);
   renderKPI();
@@ -766,13 +751,14 @@ function renderKPI(){
   // di antara filter aktif, berapa alumni berprestasi yg masuk
   const alumniInFilter = filtered.filter(r=>r.prestasi).length;
 
+  // Urutan kartu: Total Karya, Instansi, Provinsi, Pemda/K-L — kartu ★ Terbaik & 🏆 Alumni paling akhir
   const kpis = [
     {cls:'', label:'Total Karya', value:n.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total.toLocaleString('id-ID')} total dokumen`},
-    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
-    {cls:'k6', label:'🏆 Alumni Berprestasi', value:alumniInFilter.toLocaleString('id-ID'), sub:`dari ${totalAlumni.toLocaleString('id-ID')} total • penghargaan pasca-diklat`},
     {cls:'k2', label:'Instansi Unik', value:instAll.size.toLocaleString('id-ID'), sub:`dari ${DATA.stats.total_instansi_unik.toLocaleString('id-ID')} total instansi`},
     {cls:'k3', label:'Provinsi Terjangkau', value:provSet.size, sub:'provinsi berbeda'},
     {cls:'k4', label:'Karya: Pemda / K/L', value:`${pemda} / ${kl}`, sub:`instansi: ${instSetPemda.size} / ${instSetKL.size}`},
+    {cls:'k5', label:'★ Karya Terbaik', value:terbaikKarya.toLocaleString('id-ID'), sub:`dari ${totalTerbaik.toLocaleString('id-ID')} total • 1 karya = 1 peserta`},
+    {cls:'k6', label:'🏆 Alumni Berprestasi', value:alumniInFilter.toLocaleString('id-ID'), sub:`dari ${totalAlumni.toLocaleString('id-ID')} total • penghargaan pasca-diklat`},
   ];
   document.getElementById('kpis').innerHTML = kpis.map(k=>`
     <div class="kpi ${k.cls}">
@@ -793,14 +779,12 @@ function renderCharts(){
   Chart.defaults.color = '#475569';
 
   const tahunCount = {};
-  const katCount = {Pemda:0, 'K/L':0};
   const provCount = {};
   const bidangCount = {};
   const priorCount = {};
   const admCount = {};
   filtered.forEach(r=>{
     if(r.tahun) tahunCount[r.tahun] = (tahunCount[r.tahun]||0)+1;
-    if(r.kategori) katCount[r.kategori] = (katCount[r.kategori]||0)+1;
     if(r.provinsi && r.provinsi !== '-'){
       provCount[r.provinsi] = (provCount[r.provinsi]||0)+1;
     }
@@ -826,22 +810,7 @@ function renderCharts(){
     options: chartOpts({legend:false, yInt:true})
   });
 
-  // 2. Kategori (doughnut)
-  destroyChart('c-kategori');
-  charts['c-kategori'] = new Chart(document.getElementById('c-kategori'), {
-    type:'doughnut',
-    data:{
-      labels:Object.keys(katCount),
-      datasets:[{
-        data:Object.values(katCount),
-        backgroundColor:['#1d4ed8','#f59e0b'],
-        borderWidth:2, borderColor:'#fff'
-      }]
-    },
-    options: chartOpts({legend:true, doughnut:true})
-  });
-
-  // 3. Top 12 provinsi (bar horizontal)
+  // 2. Top 12 provinsi (bar horizontal)
   const provTop = Object.entries(provCount).sort((a,b)=>b[1]-a[1]).slice(0,12).reverse();
   destroyChart('c-prov');
   charts['c-prov'] = new Chart(document.getElementById('c-prov'), {
@@ -857,7 +826,7 @@ function renderCharts(){
     options: chartOpts({legend:false, indexAxis:'y'})
   });
 
-  // 4. Top bidang inovasi (bar horizontal)
+  // 3. Top bidang inovasi (bar horizontal)
   const bidTop = Object.entries(bidangCount).sort((a,b)=>b[1]-a[1]).slice(0,10).reverse();
   destroyChart('c-bidang');
   charts['c-bidang'] = new Chart(document.getElementById('c-bidang'), {
@@ -874,7 +843,7 @@ function renderCharts(){
     options: chartOpts({legend:false, indexAxis:'y'})
   });
 
-  // 5. Program Prioritas (bar vertikal, urut sesuai nomor 1-8)
+  // 4. Program Prioritas (bar vertikal, urut sesuai nomor 1-8)
   const priorDesc = DATA.stats.prioritas_desc;
   const priorLabels = priorDesc.map(p=>p.singkat);
   const priorData = priorLabels.map(l=>priorCount[l]||0);
@@ -893,7 +862,7 @@ function renderCharts(){
     options: chartOpts({legend:false, yInt:true, xRot:true})
   });
 
-  // 6. Bidang Administrasi Negara (doughnut)
+  // 5. Bidang Administrasi Negara (doughnut)
   const admTop = Object.entries(admCount).sort((a,b)=>b[1]-a[1]);
   destroyChart('c-adm');
   charts['c-adm'] = new Chart(document.getElementById('c-adm'), {
@@ -909,7 +878,7 @@ function renderCharts(){
     options: chartOpts({legend:true, doughnut:true})
   });
 
-  // 7. Jenis Diklat (doughnut) — PKN Tingkat II, PKA, PKP
+  // 6. Jenis Diklat (doughnut) — PKN Tingkat II, PKA, PKP
   const dikCount = {};
   filtered.forEach(r=>{
     const v = (r.jenis_diklat || '').trim();
