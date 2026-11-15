@@ -367,11 +367,19 @@
     <div class="map-stats" id="map-stats"></div>
   </div>
 
-  <!-- CHART ROW 1: Tren per tahun (full width; grafik Karya per Instansi dihapus karena sudah tampil di KPI Pemda/K-L) -->
-  <div class="card" style="margin-bottom:20px">
-    <h3>Tren Jumlah Karya per Tahun</h3>
-    <div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div>
-    <div class="chart-box tall"><canvas id="c-tren"></canvas></div>
+  <!-- CHART ROW 1: Tren per tahun & Jenis Diklat berdampingan agar tanpa scroll jauh -->
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Tren Jumlah Inovasi per Tahun</h3>
+      <div class="desc">Perkembangan dokumen lesson learned dari tahun ke tahun</div>
+      <div class="chart-box tall"><canvas id="c-tren"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Inovasi per Jenis Diklat</h3>
+      <div class="desc">Distribusi karya inovasi alumni berdasarkan jenis diklat pelatihan kepemimpinan (PKN Tingkat II, PKA, PKP). Grafik mengikuti filter aktif.</div>
+      <div class="chart-box" style="height:320px"><canvas id="c-diklat"></canvas></div>
+      <div class="map-stats" id="dik-stats" style="justify-content:center"></div>
+    </div>
   </div>
 
   <!-- CHART ROW 2 -->
@@ -400,16 +408,6 @@
       <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
       <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
     </div>
-  </div>
-
-  <!-- CHART ROW 4: Jenis Diklat -->
-  <div class="card" style="margin-bottom:20px">
-    <h3>Karya per Jenis Diklat</h3>
-    <div class="desc">Distribusi karya inovasi alumni berdasarkan jenis diklat pelatihan kepemimpinan (PKN Tingkat II, PKA, PKP). Grafik mengikuti filter aktif.</div>
-    <div style="max-width:560px;margin:0 auto">
-      <div class="chart-box" style="height:320px"><canvas id="c-diklat"></canvas></div>
-    </div>
-    <div class="map-stats" id="dik-stats" style="justify-content:center"></div>
   </div>
 
   <!-- TABLE -->
