@@ -325,7 +325,7 @@
       </div>
       <div class="field">
         <label>&nbsp;</label>
-        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh daftar seluruh alumni berprestasi beserta nama penghargaannya sebagai file PDF">
+        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh daftar seluruh alumni berprestasi beserta prestasi (digabung tautan sumber berita) sebagai file PDF">
           ⬇ Export PDF
         </button>
       </div>
@@ -1093,7 +1093,7 @@ document.getElementById('btn-alumni').addEventListener('click', ()=>{
   }
 });
 
-// ---------- Export PDF: daftar Alumni Berprestasi beserta nama penghargaan ----------
+// ---------- Export PDF: daftar Alumni Berprestasi — kolom Prestasi digabung tautan sumber ----------
 function normPdfLines(s){
   if(!s) return '';
   return String(s).replace(/\u00a0/g,' ')
@@ -1115,7 +1115,7 @@ async function exportAlumniPDF(){
     .slice()
     .sort((a,b)=> (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0));
   const { jsPDF } = window.jspdf;
-  // A4 landscape: cukup untuk 8 kolom (Judul Inovasi + Penghargaan + link)
+  // A4 landscape: cukup untuk 7 kolom (Judul Inovasi + Prestasi, keduanya bertaut)
   const doc = new jsPDF({unit:'pt', format:'a4', orientation:'landscape'});
   const PW = doc.internal.pageSize.getWidth();
   const PH = doc.internal.pageSize.getHeight();
@@ -1155,43 +1155,42 @@ async function exportAlumniPDF(){
   doc.text(`Total: ${rows.length} alumni berprestasi (seluruh data)  \u2022  Diunduh: ${tgl}`, MX, 107);
 
   const body = rows.map((r,i)=>{
-    const awd   = normPdfLines(r.prestasi).split('\n');
     const lk    = String(r.link||'').trim();
     const judul = String(r.judul||'').replace(/\s*\n\s*/g,' ').trim();
     return [
       String(i+1),
       r.nama || '',
+      [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
+      r.asal_instansi || '',
+      r.provinsi || '',
       // marker JUDUL_LINK: dilepas saat parse, dipakai untuk tautan klik-able
       judul + (/^https?:\/\//i.test(lk) ? '\nJUDUL_LINK:'+lk : ''),
-      awd.length>1 ? awd.map((t,ix)=>`${ix+1}. ${t}`).join('\n') : (awd[0]||''),
-      [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
-      r.provinsi || '',
-      r.asal_instansi || '',
-      normPdfLines(r.sumber_berita) || ''
+      normPdfLines(r.prestasi) || ''
     ];
   });
 
+  const colStyles = {
+    0:{cellWidth:20, halign:'center'},
+    1:{cellWidth:88, fontStyle:'bold'},
+    2:{cellWidth:74},
+    3:{cellWidth:84},
+    4:{cellWidth:66},
+    5:{cellWidth:210},
+    6:{cellWidth:228}
+  };
+
   doc.autoTable({
     startY: 120,
-    head: [['No','Nama','Judul Inovasi','Penghargaan','Diklat','Provinsi','Instansi','Sumber']],
+    head: [['No','Nama','Diklat','Instansi','Provinsi','Judul Inovasi','Prestasi']],
     body: body,
     margin:{left:MX, right:MX, top:44},
     styles:{font:'helvetica', fontSize:8, cellPadding:4, lineColor:[226,232,240], lineWidth:.5, textColor:[30,41,59], valign:'top'},
     headStyles:{fillColor:[30,64,175], textColor:255, fontStyle:'bold', fontSize:8.5, halign:'center'},
     alternateRowStyles:{fillColor:[248,250,252]},
-    columnStyles:{
-      0:{cellWidth:20, halign:'center'},
-      1:{cellWidth:88, fontStyle:'bold'},
-      2:{cellWidth:172},
-      3:{cellWidth:178},
-      4:{cellWidth:78},
-      5:{cellWidth:72},
-      6:{cellWidth:82},
-      7:{cellWidth:42}
-    },
+    columnStyles: colStyles,
     didParseCell:(d)=>{
-      // kolom Judul: buang baris marker URL, warnai biru bila ada link
-      if(d.section==='body' && d.column.index===2){
+      // kolom Judul Inovasi: buang baris marker URL, warnai biru bila ada link
+      if(d.section==='body' && d.column.index===5){
         const raw = String((d.cell && d.cell.raw) || '');
         const m = raw.match(/JUDUL_LINK:(https?:\/\/\S+)/);
         d.cell.__url = m ? m[1] : '';
@@ -1199,41 +1198,43 @@ async function exportAlumniPDF(){
         if(mi>=0){ d.cell.text = d.cell.text.slice(0,mi); }
         if(d.cell.__url){ d.cell.styles.textColor = [29,78,216]; }
       }
-      // kolom Sumber: tinggi baris dihitung dari label pendek, bukan URL panjang
-      if(d.section==='body' && d.column.index===7){
-        const raw = String((d.cell && d.cell.raw) || '');
-        const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
-        d.cell.text = urls.length>1 ? urls.map((_,ix)=>`Buka ${ix+1}`) : (urls.length ? ['Buka'] : ['-']);
+      // kolom Prestasi: teks penghargaan digabung dengan tautan sumber berita —
+      // tiap baris prestasi dibungkus manual agar tahu baris mana tertaut ke URL mana
+      if(d.section==='body' && d.column.index===6){
+        const rec  = rows[d.row.index];
+        const urls = String((rec && rec.sumber_berita) || '').split('\n')
+          .map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
+        const awd  = normPdfLines(rec && rec.prestasi).split('\n').filter(Boolean);
+        const lines = awd.length>1 ? awd.map((t,ix)=>`${ix+1}. ${t}`) : awd;
+        doc.setFont('helvetica','normal'); doc.setFontSize(d.cell.styles.fontSize || 8);
+        // lebar kolom Prestasi tetap dari columnStyles (d.cell.width belum terhitung saat parse)
+        const cw  = (colStyles[6].cellWidth || 228) - 8;
+        const out = [];
+        lines.forEach((t,ix)=>{
+          const url = urls.length===1 ? urls[0] : (ix < urls.length ? urls[ix] : '');
+          doc.splitTextToSize(t, cw).forEach(w=>out.push({t:w, u:url}));
+        });
+        d.cell.text        = out.map(o=>o.t);
+        d.cell.__lineUrls  = out.map(o=>o.u);
+        if(urls.length){ d.cell.styles.textColor = [29,78,216]; }
       }
     },
-    willDrawCell:(d)=>{
-      // kolom Sumber digambar manual agar tautannya klik-able
-      if(d.section==='body' && d.column.index===7){ d.cell.text = []; }
-    },
     didDrawCell:(d)=>{
-      // kolom Judul: tautan menutupi seluruh area teks judul
-      if(d.section==='body' && d.column.index===2 && d.cell.__url){
+      // kolom Judul Inovasi: tautan menutupi seluruh area teks judul
+      if(d.section==='body' && d.column.index===5 && d.cell.__url){
         const lh = d.cell.styles.fontSize * 1.15;
         for(let li=0; li<d.cell.text.length; li++){
           doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:d.cell.__url});
         }
         return;
       }
-      if(d.section!=='body' || d.column.index!==7) return;
-      const raw = String((d.cell && d.cell.raw) || '');
-      const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
-      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(29,78,216);
-      if(!urls.length){
-        doc.setTextColor(148,163,184);
-        doc.text('-', d.cell.x+d.cell.width/2, d.cell.y+4.5, {align:'center'});
-        return;
+      // kolom Prestasi: tautan per baris teks ke sumber beritanya
+      if(d.section==='body' && d.column.index===6 && d.cell.__lineUrls){
+        const lh = d.cell.styles.fontSize * 1.15;
+        d.cell.__lineUrls.forEach((u,li)=>{
+          if(u){ doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:u}); }
+        });
       }
-      let yy = d.cell.y + 4.5;
-      urls.forEach((u,ix)=>{
-        const label = urls.length>1 ? `Buka ${ix+1}` : 'Buka';
-        doc.textWithLink(label, d.cell.x+4, yy, {url:u});
-        yy += 9.5;
-      });
     }
   });
 
@@ -1252,7 +1253,7 @@ async function exportAlumniPDF(){
   toast(`PDF berhasil dibuat: ${rows.length} alumni berprestasi (${pages} halaman)`);
 }
 
-// Tombol "⬇ Export PDF" — unduh daftar alumni berprestasi (dengan nama penghargaan)
+// Tombol "⬇ Export PDF" — unduh daftar alumni berprestasi (Prestasi digabung tautan sumber)
 document.getElementById('btn-alumni-pdf').addEventListener('click', exportAlumniPDF);
 
 loadData();
