@@ -1115,7 +1115,8 @@ async function exportAlumniPDF(){
     .slice()
     .sort((a,b)=> (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0));
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({unit:'pt', format:'a4'});
+  // A4 landscape: cukup untuk 8 kolom (Judul Inovasi + Penghargaan + link)
+  const doc = new jsPDF({unit:'pt', format:'a4', orientation:'landscape'});
   const PW = doc.internal.pageSize.getWidth();
   const PH = doc.internal.pageSize.getHeight();
   const MX = 34;
@@ -1153,19 +1154,26 @@ async function exportAlumniPDF(){
   doc.setFontSize(9); doc.setTextColor(51,65,85);
   doc.text(`Total: ${rows.length} alumni berprestasi (seluruh data)  \u2022  Diunduh: ${tgl}`, MX, 107);
 
-  const body = rows.map((r,i)=>[
-    String(i+1),
-    r.nama || '',
-    normPdfLines(r.prestasi),
-    [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
-    r.provinsi || '',
-    r.asal_instansi || '',
-    normPdfLines(r.sumber_berita) || ''
-  ]);
+  const body = rows.map((r,i)=>{
+    const awd   = normPdfLines(r.prestasi).split('\n');
+    const lk    = String(r.link||'').trim();
+    const judul = String(r.judul||'').replace(/\s*\n\s*/g,' ').trim();
+    return [
+      String(i+1),
+      r.nama || '',
+      // marker JUDUL_LINK: dilepas saat parse, dipakai untuk tautan klik-able
+      judul + (/^https?:\/\//i.test(lk) ? '\nJUDUL_LINK:'+lk : ''),
+      awd.length>1 ? awd.map((t,ix)=>`${ix+1}. ${t}`).join('\n') : (awd[0]||''),
+      [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
+      r.provinsi || '',
+      r.asal_instansi || '',
+      normPdfLines(r.sumber_berita) || ''
+    ];
+  });
 
   doc.autoTable({
     startY: 120,
-    head: [['No','Nama','Penghargaan','Diklat','Provinsi','Instansi','Sumber']],
+    head: [['No','Nama','Judul Inovasi','Penghargaan','Diklat','Provinsi','Instansi','Sumber']],
     body: body,
     margin:{left:MX, right:MX, top:44},
     styles:{font:'helvetica', fontSize:8, cellPadding:4, lineColor:[226,232,240], lineWidth:.5, textColor:[30,41,59], valign:'top'},
@@ -1173,16 +1181,26 @@ async function exportAlumniPDF(){
     alternateRowStyles:{fillColor:[248,250,252]},
     columnStyles:{
       0:{cellWidth:20, halign:'center'},
-      1:{cellWidth:76, fontStyle:'bold'},
-      2:{cellWidth:162},
-      3:{cellWidth:86},
-      4:{cellWidth:64},
-      5:{cellWidth:78},
-      6:{cellWidth:42}
+      1:{cellWidth:88, fontStyle:'bold'},
+      2:{cellWidth:172},
+      3:{cellWidth:178},
+      4:{cellWidth:78},
+      5:{cellWidth:72},
+      6:{cellWidth:82},
+      7:{cellWidth:42}
     },
     didParseCell:(d)=>{
-      // tinggi baris dihitung dari label pendek, bukan URL panjang
-      if(d.section==='body' && d.column.index===6){
+      // kolom Judul: buang baris marker URL, warnai biru bila ada link
+      if(d.section==='body' && d.column.index===2){
+        const raw = String((d.cell && d.cell.raw) || '');
+        const m = raw.match(/JUDUL_LINK:(https?:\/\/\S+)/);
+        d.cell.__url = m ? m[1] : '';
+        const mi = d.cell.text.findIndex(l=>l.includes('JUDUL_LINK:'));
+        if(mi>=0){ d.cell.text = d.cell.text.slice(0,mi); }
+        if(d.cell.__url){ d.cell.styles.textColor = [29,78,216]; }
+      }
+      // kolom Sumber: tinggi baris dihitung dari label pendek, bukan URL panjang
+      if(d.section==='body' && d.column.index===7){
         const raw = String((d.cell && d.cell.raw) || '');
         const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
         d.cell.text = urls.length>1 ? urls.map((_,ix)=>`Buka ${ix+1}`) : (urls.length ? ['Buka'] : ['-']);
@@ -1190,10 +1208,18 @@ async function exportAlumniPDF(){
     },
     willDrawCell:(d)=>{
       // kolom Sumber digambar manual agar tautannya klik-able
-      if(d.section==='body' && d.column.index===6){ d.cell.text = []; }
+      if(d.section==='body' && d.column.index===7){ d.cell.text = []; }
     },
     didDrawCell:(d)=>{
-      if(d.section!=='body' || d.column.index!==6) return;
+      // kolom Judul: tautan menutupi seluruh area teks judul
+      if(d.section==='body' && d.column.index===2 && d.cell.__url){
+        const lh = d.cell.styles.fontSize * 1.15;
+        for(let li=0; li<d.cell.text.length; li++){
+          doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:d.cell.__url});
+        }
+        return;
+      }
+      if(d.section!=='body' || d.column.index!==7) return;
       const raw = String((d.cell && d.cell.raw) || '');
       const urls = raw.split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
       doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(29,78,216);
