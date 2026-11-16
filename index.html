@@ -1060,14 +1060,13 @@ function escapeHtml(s){
     else applyFilter();
   });
 });
-// Tombol "★ Peserta Terbaik" — toggle filter tabel hanya ke karya terbaik + scroll ke tabel
+// Tombol "★ Peserta Terbaik" — toggle filter tabel hanya ke karya terbaik (tanpa auto-scroll ke tabel; KPI sudah menampilkan perbedaannya, biar user scroll sendiri)
 document.getElementById('btn-terbaik').addEventListener('click', ()=>{
   onlyTerbaikOn = !onlyTerbaikOn;
   namaFocus = ''; idFocus = 0;
   page = 1;
   applyFilter();
   if(onlyTerbaikOn){
-    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
     toast(`Menampilkan hanya peserta terbaik (${filtered.length.toLocaleString('id-ID')} karya)`);
   } else {
     toast('Menampilkan semua karya');
@@ -1082,14 +1081,13 @@ document.getElementById('btn-reset').addEventListener('click', ()=>{
   toast('Filter direset');
 });
 
-// Tombol "🏆 Alumni Berprestasi" — toggle filter tabel hanya ke alumni berprestasi + scroll ke tabel
+// Tombol "🏆 Alumni Berprestasi" — toggle filter tabel hanya ke alumni berprestasi (tanpa auto-scroll ke tabel; KPI sudah menampilkan perbedaannya, biar user scroll sendiri)
 document.getElementById('btn-alumni').addEventListener('click', ()=>{
   onlyAlumniOn = !onlyAlumniOn;
   namaFocus = ''; idFocus = 0;
   page = 1;
   applyFilter();
   if(onlyAlumniOn){
-    document.getElementById('tbl').scrollIntoView({behavior:'smooth', block:'start'});
     toast(`Menampilkan hanya alumni berprestasi (${filtered.length.toLocaleString('id-ID')} alumni)`);
   } else {
     toast('Menampilkan semua karya');
