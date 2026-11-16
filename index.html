@@ -325,7 +325,7 @@
       </div>
       <div class="field">
         <label>&nbsp;</label>
-        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF (nama, judul, instansi, prestasi, dll.)">
+        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF (nama, judul, instansi, program prioritas/prestasi, dll.)">
           ⬇ Export PDF
         </button>
       </div>
@@ -1101,6 +1101,15 @@ function normPdfLines(s){
     .join('\n');
 }
 
+// Teks Program Prioritas untuk sel PDF: nama lengkap dipilih, fallback singkat, lalu '\u2014'.
+function prioritasCellText(r){
+  const nama   = String((r && r.prioritas_nama)   || '').trim();
+  const singkat= String((r && r.prioritas_singkat)|| '').trim();
+  if(nama && nama !== 'Tidak Ada')    return nama;
+  if(singkat && singkat !== 'Tidak Ada') return singkat;
+  return '\u2014';
+}
+
 // Ringkas filter aktif menjadi satu baris deskripsi untuk kop PDF.
 function activeFilterDesc(){
   const q      = document.getElementById('f-search').value.trim();
@@ -1210,16 +1219,18 @@ async function exportCurrentPDF(){
   doc.text(descLines, MX, 120);
   const startY = 120 + descLines.length*9.6 + 8;
 
-  // Kolom adaptif: kolom Prestasi hanya muncul bila ada baris berprestasi di hasil filter,
-  // supaya ekspor tema umum (mis. "stunting") tidak menyimpan kolom prestasi kosong.
-  const hasPrestasi = rows.some(r=>r.prestasi);
+  // Kolom ke-8 adaptif terhadap konteks:
+  //   - pencarian Alumni Berprestasi (onlyAlumniOn) -> kolom "Prestasi" (teks penghargaan + tautan sumber)
+  //   - selain itu                               -> kolom "Program Prioritas" (nama program prioritas)
+  const isAlumniExport = !!onlyAlumniOn;
 
   const body = rows.map((r,i)=>{
     const lk    = String(r.link||'').trim();
     const judul = String(r.judul||'').replace(/\s*\n\s*/g,' ').trim();
     const dikThn = [r.jenis_diklat, r.tahun ? 'Thn '+r.tahun : ''].filter(Boolean).join('\n');
     const daerah = [r.asal_daerah, r.provinsi].filter(Boolean).join(', ');
-    const row = [
+    const lastCell = isAlumniExport ? (normPdfLines(r.prestasi) || '') : prioritasCellText(r);
+    return [
       String(i+1),
       r.nama || '',
       dikThn,
@@ -1227,32 +1238,37 @@ async function exportCurrentPDF(){
       daerah,
       // marker JUDUL_LINK: dilepas saat parse, dipakai untuk tautan klik-able
       judul + (/^https?:\/\//i.test(lk) ? '\nJUDUL_LINK:'+lk : ''),
-      (r.bidang_inovasi && r.bidang_inovasi !== '-') ? r.bidang_inovasi : ''
+      (r.bidang_inovasi && r.bidang_inovasi !== '-') ? r.bidang_inovasi : '',
+      lastCell
     ];
-    if(hasPrestasi) row.push(normPdfLines(r.prestasi) || '');
-    return row;
   });
 
-  let head = ['No','Nama','Diklat / Tahun','Instansi','Daerah / Provinsi','Judul Inovasi','Bidang Inovasi'];
-  // layout tanpa Prestasi (7 kolom): total ~770pt muat di A4 landscape (774pt)
-  let colStyles = {
-    0:{cellWidth:22, halign:'center'},
-    1:{cellWidth:88, fontStyle:'bold'},
-    2:{cellWidth:62},
-    3:{cellWidth:84},
-    4:{cellWidth:72},
-    5:{cellWidth:234},
-    6:{cellWidth:208}
+  const head = ['No','Nama','Diklat / Tahun','Instansi','Daerah / Provinsi','Judul Inovasi','Bidang Inovasi',
+                isAlumniExport ? 'Prestasi' : 'Program Prioritas'];
+
+  // cellWidth No = 32 agar 4 digit (sampai 9999) tidak terbungkus ke baris baru.
+  // Dua layout (alumni / non-alumni) sama-sama 8 kolom, total ~752pt muat di A4 landscape (774pt).
+  const colStyles = isAlumniExport ? {
+    0:{cellWidth:32, halign:'center'},
+    1:{cellWidth:86, fontStyle:'bold'},
+    2:{cellWidth:60},
+    3:{cellWidth:80},
+    4:{cellWidth:68},
+    5:{cellWidth:172},
+    6:{cellWidth:104},
+    7:{cellWidth:150}
+  } : {
+    0:{cellWidth:32, halign:'center'},
+    1:{cellWidth:86, fontStyle:'bold'},
+    2:{cellWidth:60},
+    3:{cellWidth:80},
+    4:{cellWidth:68},
+    5:{cellWidth:150},
+    6:{cellWidth:104},
+    7:{cellWidth:172}
   };
-  if(hasPrestasi){
-    head.push('Prestasi');
-    // redistribute: sempitkan Judul & Bidang, tambah kolom Prestasi (8 kolom, ~770pt)
-    colStyles[5] = {cellWidth:170};
-    colStyles[6] = {cellWidth:104};
-    colStyles[7] = {cellWidth:140};
-  }
-  const judulCol   = 5;
-  const prestasiCol = hasPrestasi ? 7 : -1;
+  const judulCol    = 5;
+  const prestasiCol = 7; // hanya bermakna saat isAlumniExport
 
   doc.autoTable({
     startY: startY,
@@ -1273,16 +1289,16 @@ async function exportCurrentPDF(){
         if(mi>=0){ d.cell.text = d.cell.text.slice(0,mi); }
         if(d.cell.__url){ d.cell.styles.textColor = [29,78,216]; }
       }
-      // kolom Prestasi: teks penghargaan digabung tautan sumber berita \u2014
+      // kolom Prestasi (hanya saat ekspor alumni): teks penghargaan digabung tautan sumber berita \u2014
       // tiap baris prestasi dibungkus manual agar tahu baris mana tertaut ke URL mana
-      if(hasPrestasi && d.section==='body' && d.column.index===prestasiCol){
+      if(isAlumniExport && d.section==='body' && d.column.index===prestasiCol){
         const rec  = rows[d.row.index];
         const urls = String((rec && rec.sumber_berita) || '').split('\n')
           .map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
         const awd  = normPdfLines(rec && rec.prestasi).split('\n').filter(Boolean);
         const lines = awd.length>1 ? awd.map((t,ix)=>(ix+1)+'. '+t) : awd;
         doc.setFont('helvetica','normal'); doc.setFontSize(d.cell.styles.fontSize || 8);
-        const cw  = (colStyles[prestasiCol].cellWidth || 140) - 8;
+        const cw  = (colStyles[prestasiCol].cellWidth || 150) - 8;
         const out = [];
         lines.forEach((t,ix)=>{
           const url = urls.length===1 ? urls[0] : (ix < urls.length ? urls[ix] : '');
@@ -1302,8 +1318,8 @@ async function exportCurrentPDF(){
         }
         return;
       }
-      // kolom Prestasi: tautan per baris teks ke sumber beritanya
-      if(hasPrestasi && d.section==='body' && d.column.index===prestasiCol && d.cell.__lineUrls){
+      // kolom Prestasi (hanya saat ekspor alumni): tautan per baris teks ke sumber beritanya
+      if(isAlumniExport && d.section==='body' && d.column.index===prestasiCol && d.cell.__lineUrls){
         const lh = d.cell.styles.fontSize * 1.15;
         d.cell.__lineUrls.forEach((u,li)=>{
           if(u){ doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:u}); }
