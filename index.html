@@ -129,7 +129,7 @@
     background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
     box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
-  /* ---------- Tombol "Export PDF" alumni berprestasi ---------- */
+  /* ---------- Tombol "Export PDF" (hasil pencarian/filter aktif) ---------- */
   .btn-export-pdf{
     display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
     color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;
@@ -325,7 +325,7 @@
       </div>
       <div class="field">
         <label>&nbsp;</label>
-        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh daftar seluruh alumni berprestasi beserta prestasi (digabung tautan sumber berita) sebagai file PDF">
+        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF (nama, judul, instansi, prestasi, dll.)">
           ⬇ Export PDF
         </button>
       </div>
@@ -1091,7 +1091,7 @@ document.getElementById('btn-alumni').addEventListener('click', ()=>{
   }
 });
 
-// ---------- Export PDF: daftar Alumni Berprestasi — kolom Prestasi digabung tautan sumber ----------
+// ---------- Export PDF: hasil pencarian/filter aktif (apa pun yang sedang ditampilkan) ----------
 function normPdfLines(s){
   if(!s) return '';
   return String(s).replace(/\u00a0/g,' ')
@@ -1101,19 +1101,69 @@ function normPdfLines(s){
     .join('\n');
 }
 
-async function exportAlumniPDF(){
+// Ringkas filter aktif menjadi satu baris deskripsi untuk kop PDF.
+function activeFilterDesc(){
+  const q      = document.getElementById('f-search').value.trim();
+  const prov   = document.getElementById('f-prov').value;
+  const tahun  = document.getElementById('f-tahun').value;
+  const kat    = document.getElementById('f-kategori').value;
+  const priSel = document.getElementById('f-prioritas');
+  const priTxt = priSel && priSel.value ? (priSel.selectedOptions[0].text.split(' \u2014 ')[0] || priSel.value) : '';
+  const adm    = document.getElementById('f-adm').value;
+  const bid    = document.getElementById('f-bidang').value;
+  const dik    = document.getElementById('f-diklat').value;
+  const parts = [];
+  if(q)    parts.push('Pencarian: "'+q+'"');
+  if(prov) parts.push('Provinsi: '+prov);
+  if(tahun)parts.push('Tahun: '+tahun);
+  if(kat)  parts.push('Instansi: '+kat);
+  if(priTxt)parts.push('Prioritas: '+priTxt);
+  if(adm)  parts.push('Bidang Adm: '+adm);
+  if(bid)  parts.push('Bidang Inovasi: '+bid);
+  if(dik)  parts.push('Diklat: '+dik);
+  if(onlyTerbaikOn) parts.push('\u2605 Peserta Terbaik');
+  if(onlyAlumniOn)  parts.push('\U0001F3C6 Alumni Berprestasi');
+  if(idFocus) parts.push('Karya terpilih: '+namaFocus);
+  return parts.length ? parts.join('  \u2022  ') : 'Semua data (tanpa filter)';
+}
+
+// Judul kontekstual sesuai kondisi filter/toggle/pencarian aktif.
+function activeFilterTitle(){
+  const q = document.getElementById('f-search').value.trim();
+  if(idFocus)        return 'Karya Inovasi Terpilih';
+  if(onlyAlumniOn)   return 'Alumni Berprestasi';
+  if(onlyTerbaikOn)  return 'Peserta Terbaik';
+  if(q)              return 'Hasil Pencarian: "'+q+'"';
+  return 'Daftar Karya Inovasi';
+}
+
+function sanitizeFileSlug(s){
+  return String(s||'')
+    .replace(/[\\/:*?"<>|\n\r\t]+/g,'-')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-|-$/g,'')
+    .slice(0,60);
+}
+
+async function exportCurrentPDF(){
   if(typeof DATA==='undefined' || !DATA || !DATA.records || !DATA.records.length){ toast('Data belum termuat'); return; }
   if(!window.jspdf || !window.jspdf.jsPDF){
-    toast('Pustaka PDF belum termuat — dibutuhkan koneksi internet saat membuka halaman');
+    toast('Pustaka PDF belum termuat \u2014 dibutuhkan koneksi internet saat membuka halaman');
     return;
   }
-  toast('Menyusun PDF alumni berprestasi…');
-  // urut tahun terbaru → terlama (urutan asli dipakai bila tahun sama)
-  const rows = DATA.records.filter(r=>r.prestasi)
-    .slice()
-    .sort((a,b)=> (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0));
+  // Sumber baris = hasil filter aktif (search + dropdown + toggle), sama dengan yang
+  // ditampilkan tabel. idFocus (karya terpilih lewat klik baris) juga diikutkan.
+  let rows = filtered.slice();
+  if(idFocus) rows = rows.filter(r => r.id === idFocus);
+  if(!rows.length){ toast('Tidak ada data hasil pencarian untuk diekspor'); return; }
+  // urut tahun terbaru -> terlama, lalu nama (stabil)
+  rows = rows.slice().sort((a,b)=>
+    (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0) ||
+    String(a.nama||'').localeCompare(String(b.nama||'')));
+
+  toast('Menyusun PDF hasil pencarian\u2026');
   const { jsPDF } = window.jspdf;
-  // A4 landscape: cukup untuk 7 kolom (Judul Inovasi + Prestasi, keduanya bertaut)
   const doc = new jsPDF({unit:'pt', format:'a4', orientation:'landscape'});
   const PW = doc.internal.pageSize.getWidth();
   const PH = doc.internal.pageSize.getHeight();
@@ -1137,12 +1187,13 @@ async function exportAlumniPDF(){
       im.src = 'logo-lan.png';
     });
     if(logo){ doc.addImage(logo.d,'PNG',MX,26,logo.w,logo.h); titleX = MX + logo.w + 14; }
-  }catch(e){ /* tanpa logo, lanjut saja */ }
+  }catch(e){ /* tanpa logo, lanjut */ }
 
+  const judulKonteks = activeFilterTitle();
   doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(30,41,59);
   doc.text('JEJAK INOVASI', titleX, 44);
   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(71,85,105);
-  doc.text('Alumni Berprestasi Pelatihan Kepemimpinan', titleX, 60);
+  doc.text(judulKonteks, titleX, 60);
   doc.setFontSize(8.5); doc.setTextColor(100,116,139);
   doc.text('Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI', titleX, 74);
   doc.setDrawColor(30,64,175); doc.setLineWidth(1.2);
@@ -1150,36 +1201,62 @@ async function exportAlumniPDF(){
 
   const tgl = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   doc.setFontSize(9); doc.setTextColor(51,65,85);
-  doc.text(`Total: ${rows.length} alumni berprestasi (seluruh data)  \u2022  Diunduh: ${tgl}`, MX, 107);
+  doc.text((rows.length===1 ? 'Total: 1 karya inovasi' : 'Total: '+rows.length+' karya inovasi')
+           + ' (sesuai filter aktif)  \u2022  Diunduh: '+tgl, MX, 107);
+
+  // Baris deskripsi filter (bisa terbungkus beberapa baris)
+  const descLines = doc.splitTextToSize('Filter: ' + activeFilterDesc(), PW-2*MX);
+  doc.setFontSize(8); doc.setTextColor(100,116,139);
+  doc.text(descLines, MX, 120);
+  const startY = 120 + descLines.length*9.6 + 8;
+
+  // Kolom adaptif: kolom Prestasi hanya muncul bila ada baris berprestasi di hasil filter,
+  // supaya ekspor tema umum (mis. "stunting") tidak menyimpan kolom prestasi kosong.
+  const hasPrestasi = rows.some(r=>r.prestasi);
 
   const body = rows.map((r,i)=>{
     const lk    = String(r.link||'').trim();
     const judul = String(r.judul||'').replace(/\s*\n\s*/g,' ').trim();
-    return [
+    const dikThn = [r.jenis_diklat, r.tahun ? 'Thn '+r.tahun : ''].filter(Boolean).join('\n');
+    const daerah = [r.asal_daerah, r.provinsi].filter(Boolean).join(', ');
+    const row = [
       String(i+1),
       r.nama || '',
-      [r.jenis_diklat, r.tahun ? `tahun ${r.tahun}` : ''].filter(Boolean).join(' '),
+      dikThn,
       r.asal_instansi || '',
-      r.provinsi || '',
+      daerah,
       // marker JUDUL_LINK: dilepas saat parse, dipakai untuk tautan klik-able
       judul + (/^https?:\/\//i.test(lk) ? '\nJUDUL_LINK:'+lk : ''),
-      normPdfLines(r.prestasi) || ''
+      (r.bidang_inovasi && r.bidang_inovasi !== '-') ? r.bidang_inovasi : ''
     ];
+    if(hasPrestasi) row.push(normPdfLines(r.prestasi) || '');
+    return row;
   });
 
-  const colStyles = {
-    0:{cellWidth:20, halign:'center'},
+  let head = ['No','Nama','Diklat / Tahun','Instansi','Daerah / Provinsi','Judul Inovasi','Bidang Inovasi'];
+  // layout tanpa Prestasi (7 kolom): total ~770pt muat di A4 landscape (774pt)
+  let colStyles = {
+    0:{cellWidth:22, halign:'center'},
     1:{cellWidth:88, fontStyle:'bold'},
-    2:{cellWidth:74},
+    2:{cellWidth:62},
     3:{cellWidth:84},
-    4:{cellWidth:66},
-    5:{cellWidth:210},
-    6:{cellWidth:228}
+    4:{cellWidth:72},
+    5:{cellWidth:234},
+    6:{cellWidth:208}
   };
+  if(hasPrestasi){
+    head.push('Prestasi');
+    // redistribute: sempitkan Judul & Bidang, tambah kolom Prestasi (8 kolom, ~770pt)
+    colStyles[5] = {cellWidth:170};
+    colStyles[6] = {cellWidth:104};
+    colStyles[7] = {cellWidth:140};
+  }
+  const judulCol   = 5;
+  const prestasiCol = hasPrestasi ? 7 : -1;
 
   doc.autoTable({
-    startY: 120,
-    head: [['No','Nama','Diklat','Instansi','Provinsi','Judul Inovasi','Prestasi']],
+    startY: startY,
+    head: [head],
     body: body,
     margin:{left:MX, right:MX, top:44},
     styles:{font:'helvetica', fontSize:8, cellPadding:4, lineColor:[226,232,240], lineWidth:.5, textColor:[30,41,59], valign:'top'},
@@ -1188,7 +1265,7 @@ async function exportAlumniPDF(){
     columnStyles: colStyles,
     didParseCell:(d)=>{
       // kolom Judul Inovasi: buang baris marker URL, warnai biru bila ada link
-      if(d.section==='body' && d.column.index===5){
+      if(d.section==='body' && d.column.index===judulCol){
         const raw = String((d.cell && d.cell.raw) || '');
         const m = raw.match(/JUDUL_LINK:(https?:\/\/\S+)/);
         d.cell.__url = m ? m[1] : '';
@@ -1196,17 +1273,16 @@ async function exportAlumniPDF(){
         if(mi>=0){ d.cell.text = d.cell.text.slice(0,mi); }
         if(d.cell.__url){ d.cell.styles.textColor = [29,78,216]; }
       }
-      // kolom Prestasi: teks penghargaan digabung dengan tautan sumber berita —
+      // kolom Prestasi: teks penghargaan digabung tautan sumber berita \u2014
       // tiap baris prestasi dibungkus manual agar tahu baris mana tertaut ke URL mana
-      if(d.section==='body' && d.column.index===6){
+      if(hasPrestasi && d.section==='body' && d.column.index===prestasiCol){
         const rec  = rows[d.row.index];
         const urls = String((rec && rec.sumber_berita) || '').split('\n')
           .map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
         const awd  = normPdfLines(rec && rec.prestasi).split('\n').filter(Boolean);
-        const lines = awd.length>1 ? awd.map((t,ix)=>`${ix+1}. ${t}`) : awd;
+        const lines = awd.length>1 ? awd.map((t,ix)=>(ix+1)+'. '+t) : awd;
         doc.setFont('helvetica','normal'); doc.setFontSize(d.cell.styles.fontSize || 8);
-        // lebar kolom Prestasi tetap dari columnStyles (d.cell.width belum terhitung saat parse)
-        const cw  = (colStyles[6].cellWidth || 228) - 8;
+        const cw  = (colStyles[prestasiCol].cellWidth || 140) - 8;
         const out = [];
         lines.forEach((t,ix)=>{
           const url = urls.length===1 ? urls[0] : (ix < urls.length ? urls[ix] : '');
@@ -1219,7 +1295,7 @@ async function exportAlumniPDF(){
     },
     didDrawCell:(d)=>{
       // kolom Judul Inovasi: tautan menutupi seluruh area teks judul
-      if(d.section==='body' && d.column.index===5 && d.cell.__url){
+      if(d.section==='body' && d.column.index===judulCol && d.cell.__url){
         const lh = d.cell.styles.fontSize * 1.15;
         for(let li=0; li<d.cell.text.length; li++){
           doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:d.cell.__url});
@@ -1227,7 +1303,7 @@ async function exportAlumniPDF(){
         return;
       }
       // kolom Prestasi: tautan per baris teks ke sumber beritanya
-      if(d.section==='body' && d.column.index===6 && d.cell.__lineUrls){
+      if(hasPrestasi && d.section==='body' && d.column.index===prestasiCol && d.cell.__lineUrls){
         const lh = d.cell.styles.fontSize * 1.15;
         d.cell.__lineUrls.forEach((u,li)=>{
           if(u){ doc.link(d.cell.x+2, d.cell.y+1+li*lh, d.cell.width-4, lh, {url:u}); }
@@ -1242,17 +1318,24 @@ async function exportAlumniPDF(){
     doc.setPage(p);
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(148,163,184);
     doc.text('Jejak Inovasi \u2014 Dashboard Inovasi Alumni Pelatihan Kepemimpinan Pusjar SKTAN LAN RI', MX, PH-16);
-    doc.text(`Halaman ${p} dari ${pages}`, PW-MX, PH-16, {align:'right'});
+    doc.text('Halaman '+p+' dari '+pages, PW-MX, PH-16, {align:'right'});
   }
 
-  window.__lastAlumniPdf = doc;
-  const fname = `Alumni-Berprestasi-Jejak-Inovasi-${new Date().toISOString().slice(0,10)}.pdf`;
+  window.__lastPdf = doc;
+  // nama file kontekstual
+  let ctxSlug;
+  if(idFocus)          ctxSlug = 'Karya-Terpilih-' + sanitizeFileSlug(String(namaFocus||''));
+  else if(onlyAlumniOn)ctxSlug = 'Alumni-Berprestasi';
+  else if(onlyTerbaikOn)ctxSlug = 'Peserta-Terbaik';
+  else { const q = document.getElementById('f-search').value.trim();
+         ctxSlug = q ? 'Pencarian-' + sanitizeFileSlug(q) : 'Daftar-Inovasi'; }
+  const fname = 'Jejak-Inovasi_'+ctxSlug+'_'+new Date().toISOString().slice(0,10)+'.pdf';
   doc.save(fname);
-  toast(`PDF berhasil dibuat: ${rows.length} alumni berprestasi (${pages} halaman)`);
+  toast('PDF berhasil dibuat: '+rows.length+' karya ('+pages+' halaman)');
 }
 
-// Tombol "⬇ Export PDF" — unduh daftar alumni berprestasi (Prestasi digabung tautan sumber)
-document.getElementById('btn-alumni-pdf').addEventListener('click', exportAlumniPDF);
+// Tombol "\u2b07 Export PDF" \u2014 unduh hasil pencarian/filter aktif sebagai PDF
+document.getElementById('btn-alumni-pdf').addEventListener('click', exportCurrentPDF);
 
 loadData();
 </script>
