@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --primary:#1d4ed8; --primary-dark:#1e3a8a; --primary-soft:#dbeafe;
@@ -129,13 +130,16 @@
     background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#10b981;
     box-shadow:0 3px 10px rgba(16,185,129,.4);
   }
-  /* ---------- Tombol "Export PDF" (hasil pencarian/filter aktif) ---------- */
-  .btn-export-pdf{
-    display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;font-weight:700;
-    color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;
-    user-select:none;transition:all .12s;white-space:nowrap;
+  /* ---------- Tombol Export (PDF & Excel) — hasil pencarian/filter aktif ---------- */
+  .export-row{display:flex;gap:8px;flex-wrap:nowrap}
+  .btn-export-pdf, .btn-export-excel{
+    display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:11.5px;font-weight:700;
+    border-radius:7px;padding:6px 11px;user-select:none;transition:all .12s;white-space:nowrap;
   }
-  .btn-export-pdf:hover{background:#dbeafe;border-color:#3b82f6;box-shadow:0 3px 10px rgba(59,130,246,.25)}
+  .btn-export-pdf{color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe}
+  .btn-export-pdf:hover{background:#dbeafe;border-color:#3b82f6;box-shadow:0 2px 8px rgba(59,130,246,.22)}
+  .btn-export-excel{color:#166534;background:#ecfdf5;border:1px solid #a7f3d0}
+  .btn-export-excel:hover{background:#d1fae5;border-color:#10b981;box-shadow:0 2px 8px rgba(16,185,129,.22)}
 
   /* ---------- Cross-badge 🏆 di tabel utama (alumni berprestasi) ---------- */
   table tr.alumni-row{box-shadow:inset 3px 0 0 #10b981}
@@ -324,10 +328,11 @@
         </button>
       </div>
       <div class="field">
-        <label>&nbsp;</label>
-        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF (nama, judul, instansi, program prioritas/prestasi, dll.)">
-          ⬇ Export PDF
-        </button>
+        <label>Export</label>
+        <div class="export-row">
+          <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF">⬇ PDF</button>
+          <button class="btn-export-excel" id="btn-export-excel" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file Excel (.xlsx)">⬇ Excel</button>
+        </div>
       </div>
       <div class="field">
         <label>&nbsp;</label>
@@ -1091,7 +1096,7 @@ document.getElementById('btn-alumni').addEventListener('click', ()=>{
   }
 });
 
-// ---------- Export PDF: hasil pencarian/filter aktif (apa pun yang sedang ditampilkan) ----------
+// ---------- Export PDF & Excel: hasil pencarian/filter aktif (apa pun yang sedang ditampilkan) ----------
 function normPdfLines(s){
   if(!s) return '';
   return String(s).replace(/\u00a0/g,' ')
@@ -1101,7 +1106,7 @@ function normPdfLines(s){
     .join('\n');
 }
 
-// Teks Program Prioritas untuk sel PDF: nama lengkap dipilih, fallback singkat, lalu '\u2014'.
+// Teks Program Prioritas untuk sel PDF/Excel: nama lengkap dipilih, fallback singkat, lalu '\u2014'.
 function prioritasCellText(r){
   const nama   = String((r && r.prioritas_nama)   || '').trim();
   const singkat= String((r && r.prioritas_singkat)|| '').trim();
@@ -1146,6 +1151,7 @@ function activeFilterTitle(){
   return 'Daftar Karya Inovasi';
 }
 
+// Slug aman untuk nama file dari teks bebas.
 function sanitizeFileSlug(s){
   return String(s||'')
     .replace(/[\\/:*?"<>|\n\r\t]+/g,'-')
@@ -1155,21 +1161,33 @@ function sanitizeFileSlug(s){
     .slice(0,60);
 }
 
+// Sumber baris + urutan yang dipakai bersama oleh PDF & Excel.
+function exportRows(){
+  let rows = filtered.slice();
+  if(idFocus) rows = rows.filter(r => r.id === idFocus);
+  rows = rows.slice().sort((a,b)=>
+    (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0) ||
+    String(a.nama||'').localeCompare(String(b.nama||'')));
+  return rows;
+}
+
+// Slug konteks untuk nama file (dipakai PDF & Excel).
+function exportCtxSlug(){
+  if(idFocus)          return 'Karya-Terpilih-' + sanitizeFileSlug(String(namaFocus||''));
+  if(onlyAlumniOn)     return 'Alumni-Berprestasi';
+  if(onlyTerbaikOn)    return 'Peserta-Terbaik';
+  const q = document.getElementById('f-search').value.trim();
+  return q ? 'Pencarian-' + sanitizeFileSlug(q) : 'Daftar-Inovasi';
+}
+
 async function exportCurrentPDF(){
   if(typeof DATA==='undefined' || !DATA || !DATA.records || !DATA.records.length){ toast('Data belum termuat'); return; }
   if(!window.jspdf || !window.jspdf.jsPDF){
     toast('Pustaka PDF belum termuat \u2014 dibutuhkan koneksi internet saat membuka halaman');
     return;
   }
-  // Sumber baris = hasil filter aktif (search + dropdown + toggle), sama dengan yang
-  // ditampilkan tabel. idFocus (karya terpilih lewat klik baris) juga diikutkan.
-  let rows = filtered.slice();
-  if(idFocus) rows = rows.filter(r => r.id === idFocus);
+  const rows = exportRows();
   if(!rows.length){ toast('Tidak ada data hasil pencarian untuk diekspor'); return; }
-  // urut tahun terbaru -> terlama, lalu nama (stabil)
-  rows = rows.slice().sort((a,b)=>
-    (parseInt(b.tahun,10)||0) - (parseInt(a.tahun,10)||0) ||
-    String(a.nama||'').localeCompare(String(b.nama||'')));
 
   toast('Menyusun PDF hasil pencarian\u2026');
   const { jsPDF } = window.jspdf;
@@ -1338,20 +1356,78 @@ async function exportCurrentPDF(){
   }
 
   window.__lastPdf = doc;
-  // nama file kontekstual
-  let ctxSlug;
-  if(idFocus)          ctxSlug = 'Karya-Terpilih-' + sanitizeFileSlug(String(namaFocus||''));
-  else if(onlyAlumniOn)ctxSlug = 'Alumni-Berprestasi';
-  else if(onlyTerbaikOn)ctxSlug = 'Peserta-Terbaik';
-  else { const q = document.getElementById('f-search').value.trim();
-         ctxSlug = q ? 'Pencarian-' + sanitizeFileSlug(q) : 'Daftar-Inovasi'; }
-  const fname = 'Jejak-Inovasi_'+ctxSlug+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+  const fname = 'Jejak-Inovasi_'+exportCtxSlug()+'_'+new Date().toISOString().slice(0,10)+'.pdf';
   doc.save(fname);
   toast('PDF berhasil dibuat: '+rows.length+' karya ('+pages+' halaman)');
 }
 
-// Tombol "\u2b07 Export PDF" \u2014 unduh hasil pencarian/filter aktif sebagai PDF
+function exportCurrentExcel(){
+  if(typeof DATA==='undefined' || !DATA || !DATA.records || !DATA.records.length){ toast('Data belum termuat'); return; }
+  if(typeof XLSX==='undefined'){
+    toast('Pustaka Excel belum termuat \u2014 dibutuhkan koneksi internet saat membuka halaman');
+    return;
+  }
+  const rows = exportRows();
+  if(!rows.length){ toast('Tidak ada data hasil pencarian untuk diekspor'); return; }
+
+  toast('Menyusun Excel hasil pencarian\u2026');
+  // Kolom terakhir adaptif: Alumni Berprestasi -> Prestasi (+ sumber berita); lainnya -> Program Prioritas.
+  const isAlumniExport = !!onlyAlumniOn;
+  const lastHeader = isAlumniExport ? 'Prestasi' : 'Program Prioritas';
+  const head = ['No','Nama','Jenis Diklat','Tahun','Asal Instansi','Asal Daerah','Provinsi',
+                'Judul Inovasi','Bidang Inovasi', lastHeader, 'Link Dokumen'];
+  const judulCol = head.indexOf('Judul Inovasi');
+  const linkCol  = head.indexOf('Link Dokumen');
+
+  const aoa = [head];
+  rows.forEach((r,i)=>{
+    const lk    = String(r.link||'').trim();
+    const judul = String(r.judul||'').replace(/\s*\n\s*/g,' ').trim();
+    let lastCell;
+    if(isAlumniExport){
+      const awd  = normPdfLines(r.prestasi);
+      const urls = String(r.sumber_berita||'').split('\n').map(u=>u.trim()).filter(u=>/^https?:\/\//i.test(u));
+      lastCell = awd + (urls.length ? '\nSumber: '+urls.join(', ') : '');
+    } else {
+      lastCell = prioritasCellText(r);
+    }
+    aoa.push([
+      i+1, r.nama||'', r.jenis_diklat||'', r.tahun||'', r.asal_instansi||'',
+      r.asal_daerah||'', r.provinsi||'', judul,
+      (r.bidang_inovasi && r.bidang_inovasi !== '-') ? r.bidang_inovasi : '',
+      lastCell, lk
+    ]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  // Tautan klik-able: Judul Inovasi & Link Dokumen menghubung ke dokumen asli.
+  rows.forEach((r,i)=>{
+    const lk = String(r.link||'').trim();
+    if(!/^https?:\/\//i.test(lk)) return;
+    const jr = XLSX.utils.encode_cell({r:i+1, c:judulCol});
+    if(ws[jr]) ws[jr].l = { Target: lk };
+    const lr = XLSX.utils.encode_cell({r:i+1, c:linkCol});
+    if(ws[lr]) ws[lr].l = { Target: lk };
+  });
+  // Lebar kolom + autofilter agar mudah disortir/filter di Excel.
+  ws['!cols'] = [
+    {wch:5},{wch:24},{wch:14},{wch:8},{wch:28},{wch:22},{wch:18},
+    {wch:48},{wch:22},{wch:40},{wch:40}
+  ];
+  ws['!autofilter'] = { ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:aoa.length-1, c:head.length-1}}) };
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Hasil Pencarian');
+
+  const fname = 'Jejak-Inovasi_'+exportCtxSlug()+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  XLSX.writeFile(wb, fname);
+  toast('Excel berhasil dibuat: '+rows.length+' karya');
+}
+
+// Tombol "\u2b07 PDF" \u2014 unduh hasil pencarian/filter aktif sebagai PDF
 document.getElementById('btn-alumni-pdf').addEventListener('click', exportCurrentPDF);
+// Tombol "\u2b07 Excel" \u2014 unduh hasil pencarian/filter aktif sebagai file Excel (.xlsx)
+document.getElementById('btn-export-excel').addEventListener('click', exportCurrentExcel);
 
 loadData();
 </script>
