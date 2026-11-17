@@ -1351,11 +1351,11 @@ async function exportCurrentPDF(){
   // Dua layout (alumni / non-alumni) sama-sama 8 kolom, total ~752pt muat di A4 landscape (774pt).
   const colStyles = isAlumniExport ? {
     0:{cellWidth:32, halign:'center'},
-    1:{cellWidth:86, fontStyle:'bold'},
+    1:{cellWidth:95, fontStyle:'bold'},   // +9 (lebih lebar agar 2 badge TERBAIK+PRESTASI muat)
     2:{cellWidth:60},
     3:{cellWidth:80},
     4:{cellWidth:68},
-    5:{cellWidth:172},
+    5:{cellWidth:163},                    // -9 (kompen)
     6:{cellWidth:104},
     7:{cellWidth:150}
   } : {
@@ -1394,8 +1394,14 @@ async function exportCurrentPDF(){
         if(d.column.index===1){
           const rawN = String((d.cell && d.cell.raw) || '');
           const clean = rawN.replace(/\s*\[(TERBAIK|PRESTASI)\]/g,'').trim();
-          d.cell.text = [clean];
           d.cell.__badges = {terbaik:isT, prestasi:isP};
+          // Jika ada badge, sisipkan baris kosong agar autoTable memesan tinggi tempat gambar badge
+          // (di-render sebagai baris terakhir, di bawah nama — tidak menutupi teks).
+          if(isT || isP){
+            d.cell.text = [clean, ''];
+          } else {
+            d.cell.text = [clean];
+          }
         }
       }
       // kolom Judul Inovasi: buang baris marker URL, warnai biru bila ada link
@@ -1428,26 +1434,29 @@ async function exportCurrentPDF(){
       }
     },
     didDrawCell:(d)=>{
-      // Kolom Nama: gambar badge "TERBAIK" dan/atau "PRESTASI" di kanan nama (sesuai tampilan web).
+      // Kolom Nama: gambar badge "TERBAIK" dan/atau "PRESTASI" DI BAWAH nama (baris terakhir),
+      // anchor kiri — bukan di samping nama, agar teks nama tidak tertutup badge.
       if(d.section==='body' && d.column.index===1 && d.cell.__badges){
         const fs = d.cell.styles.fontSize || 8;
-        const padY = 4;
-        let bx = d.cell.x + d.cell.width - 4;   // anchor kanan, gambar ke kiri
-        const by = d.cell.y + padY;
+        const lh = fs * 1.15;
+        const padX = 4;
+        // Baris terakhir = tempat badge. textLength sudah diisi baris kosong saat parse.
+        const badgeY = d.cell.y + (d.cell.text.length - 1) * lh + 1;
         const bh = fs + 2;
+        let bx = d.cell.x + padX;
+        const by = badgeY;
         const drawBadge = (label, fg, bg)=>{
           doc.setFont('helvetica','bold'); doc.setFontSize(fs-1);
           const tw = doc.getTextWidth(label);
           const bw = tw + 6;
-          bx -= bw;
           doc.setFillColor(bg[0],bg[1],bg[2]);
           doc.roundedRect(bx, by, bw, bh, 2, 2, 'F');
           doc.setTextColor(fg[0],fg[1],fg[2]);
           doc.text(label, bx+3, by+bh-2.2);
-          bx -= 3;  // jarak antar badge
+          bx += bw + 3;  // badge berikutnya ke kanan
         };
-        if(d.cell.__badges.prestasi) drawBadge('PRESTASI', [4,120,87], [209,250,229]);
         if(d.cell.__badges.terbaik)  drawBadge('TERBAIK',  [180,83,9],  [254,243,199]);
+        if(d.cell.__badges.prestasi) drawBadge('PRESTASI', [4,120,87], [209,250,229]);
         // reset font/warna biar tidak bocor ke cell lain
         doc.setFont('helvetica','normal'); doc.setFontSize(fs);
         doc.setTextColor(30,41,59);
