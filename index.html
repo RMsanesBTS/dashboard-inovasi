@@ -49,7 +49,7 @@
     padding:16px 18px;box-shadow:var(--shadow);margin-bottom:20px;
   }
   .toolbar-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:12px 14px;align-items:end;
+    display:grid;grid-template-columns:repeat(5,1fr);gap:12px 14px;align-items:end;
   }
   @media(max-width:1100px){.toolbar-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.toolbar-grid{grid-template-columns:1fr}}
@@ -215,6 +215,22 @@
   .legend-item .lname{font-weight:600;color:var(--text)}
   .legend-item .ldesc{color:var(--muted);font-size:11.5px;margin-top:1px}
 
+  /* ---------- LEGENDA KATEGORI (4 SEKSI) ---------- */
+  .legend-4col{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:760px){.legend-4col{grid-template-columns:1fr}}
+  .legend-section{border:1px solid var(--border);border-radius:10px;padding:13px 15px;background:#fafbfc}
+  .legend-section .ls-title{font-size:13px;font-weight:800;color:var(--primary-dark);margin-bottom:4px;line-height:1.3}
+  .legend-section .ls-desc{font-size:11.5px;color:var(--text);line-height:1.45;margin-bottom:5px}
+  .legend-section .ls-hukum{font-size:10.5px;color:#475569;font-style:italic;line-height:1.4;margin-bottom:9px;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+  .legend-section .ls-items{display:flex;flex-direction:column;gap:2px}
+  .legend-section .ls-item{display:flex;align-items:flex-start;gap:7px;font-size:11px;line-height:1.35;padding:2px 0}
+  .legend-section .ls-no{
+    flex-shrink:0;min-width:36px;height:18px;border-radius:4px;
+    background:var(--primary);color:#fff;font-weight:700;font-size:9px;
+    display:flex;align-items:center;justify-content:center;padding:0 5px;letter-spacing:.2px;
+  }
+  .legend-section .ls-item .ls-count{color:var(--muted);font-size:10px;margin-left:auto;white-space:nowrap}
+
   /* ---------- TABLE ---------- */
   .table-wrap{overflow:auto;border-radius:10px;border:1px solid var(--border);max-height:560px}
   table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff}
@@ -284,9 +300,10 @@
 </header>
 
 <main>
-  <!-- TOOLBAR FILTER (4 kolom) -->
+  <!-- TOOLBAR FILTER (5 kolom, 3 baris) -->
   <div class="toolbar">
     <div class="toolbar-grid">
+      <!-- Row 1: pencarian + filter utama -->
       <div class="field">
         <label>Cari nama / judul</label>
         <input id="f-search" type="search" placeholder="Ketik nama peserta atau judul…" />
@@ -294,10 +311,6 @@
       <div class="field">
         <label>Provinsi</label>
         <select id="f-prov"><option value="">Semua Provinsi</option></select>
-      </div>
-      <div class="field">
-        <label>Tahun</label>
-        <select id="f-tahun"><option value="">Semua Tahun</option></select>
       </div>
       <div class="field">
         <label>Instansi</label>
@@ -308,47 +321,52 @@
         </select>
       </div>
       <div class="field">
-        <label>Program Prioritas</label>
-        <select id="f-prioritas"><option value="">Semua Prioritas</option></select>
-      </div>
-      <div class="field">
-        <label>Bidang Administrasi Negara</label>
-        <select id="f-adm"><option value="">Semua Bidang</option></select>
-      </div>
-      <div class="field">
-        <label>Bidang Inovasi</label>
-        <select id="f-bidang"><option value="">Semua Bidang</option></select>
+        <label>Tahun</label>
+        <select id="f-tahun"><option value="">Semua Tahun</option></select>
       </div>
       <div class="field">
         <label>Jenis Diklat</label>
         <select id="f-diklat"><option value="">Semua Jenis Diklat</option></select>
       </div>
+      <!-- Row 2: kategori inovasi -->
       <div class="field">
         <label>Asta Cita</label>
         <select id="f-asta"><option value="">Semua Asta Cita</option></select>
+      </div>
+      <div class="field">
+        <label>Program Prioritas</label>
+        <select id="f-prioritas"><option value="">Semua Prioritas</option></select>
       </div>
       <div class="field">
         <label>RB Tematik</label>
         <select id="f-rb"><option value="">Semua RB Tematik</option></select>
       </div>
       <div class="field">
+        <label>Bidang Administrasi Negara</label>
+        <select id="f-adm"><option value="">Semua Bidang</option></select>
+      </div>
+      <!-- spacer: paksa tombol row 3 mulai di kolom 1 (isi sel ke-5 row 2) -->
+      <div aria-hidden="true"></div>
+      <!-- Row 3: aksi -->
+      <div class="field">
         <label>&nbsp;</label>
-        <button class="btn-terbaik" id="btn-terbaik" type="button" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
+        <button class="btn-terbaik" id="btn-terbaik" type="button" style="width:100%;justify-content:center" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
           ★ Peserta Terbaik
         </button>
       </div>
       <div class="field">
         <label>&nbsp;</label>
-        <button class="btn-alumni" id="btn-alumni" type="button" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
+        <button class="btn-alumni" id="btn-alumni" type="button" style="width:100%;justify-content:center" title="Tampilkan hanya alumni yang meraih penghargaan pasca-diklat (kolom PRESTASI di Excel)">
           🏆 Alumni Berprestasi
         </button>
       </div>
       <div class="field">
-        <label>Export</label>
-        <div class="export-row">
-          <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF">⬇ PDF</button>
-          <button class="btn-export-excel" id="btn-export-excel" type="button" title="Unduh hasil pencarian/filter aktif saat ini sebagai file Excel (.xlsx)">⬇ Excel</button>
-        </div>
+        <label>Export PDF</label>
+        <button class="btn-export-pdf" id="btn-alumni-pdf" type="button" style="width:100%;justify-content:center" title="Unduh hasil pencarian/filter aktif saat ini sebagai file PDF">⬇ PDF</button>
+      </div>
+      <div class="field">
+        <label>Export Excel</label>
+        <button class="btn-export-excel" id="btn-export-excel" type="button" style="width:100%;justify-content:center" title="Unduh hasil pencarian/filter aktif saat ini sebagai file Excel (.xlsx)">⬇ Excel</button>
       </div>
       <div class="field">
         <label>&nbsp;</label>
@@ -360,11 +378,36 @@
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
 
-  <!-- LEGENDA PROGRAM PRIORITAS -->
+  <!-- KETERANGAN KATEGORI INOVASI (4 SEKSI) -->
   <div class="legend-card" id="legend-card">
-    <h3>Keterangan Program Prioritas</h3>
-    <div class="desc">8 Program Prioritas yang menjadi fokus pembangunan nasional</div>
-    <div class="legend-grid" id="legend-grid"></div>
+    <h3>Keterangan Kategori Inovasi</h3>
+    <div class="desc">Empat dasar kategorisasi karya inovasi alumni: Asta Cita, Program Kerja Prioritas Nasional, RB Tematik, dan Bidang Administrasi Negara.</div>
+    <div class="legend-4col">
+      <div class="legend-section">
+        <div class="ls-title">8 Asta Cita</div>
+        <div class="ls-desc">8 misi Kabinet Merah Putih (Pemerintahan Prabowo&ndash;Gibran) sebagai agenda pembangunan nasional 2025&ndash;2029.</div>
+        <div class="ls-hukum"><b>Dasar hukum:</b> Perpres No. 12 Tahun 2025 (RPJMN 2025&ndash;2029); PIDATO Presiden Prabowo Subianto pada Sidang Tahunan MPR RI, 20 Oktober 2024.</div>
+        <div class="ls-items" id="ls-asta"></div>
+      </div>
+      <div class="legend-section">
+        <div class="ls-title">8 Program Kerja Prioritas Nasional (PKPN)</div>
+        <div class="ls-desc">8 program kerja prioritas yang ditetapkan dalam RAPBN/APBN sebagai penjabaran Asta Cita.</div>
+        <div class="ls-hukum"><b>Dasar hukum:</b> RAPBN/APBN (UU APBN tahunan); bersumber dari RPJMN 2025&ndash;2029 (Perpres No. 12 Tahun 2025).</div>
+        <div class="ls-items" id="ls-pkpn"></div>
+      </div>
+      <div class="legend-section">
+        <div class="ls-title">RB Tematik (Reformasi Birokrasi Tematik)</div>
+        <div class="ls-desc">10 tema prioritas RB yang diarahkan mendukung prioritas nasional. Karya non-spesifik dikategorikan &ldquo;Non-Tematik (RB Reguler)&rdquo;.</div>
+        <div class="ls-hukum"><b>Dasar hukum:</b> PermenPANRB No. 3 Tahun 2023 (Road Map RB 2025&ndash;2045); PermenPANRB No. 9 Tahun 2023 (Evaluasi RB).</div>
+        <div class="ls-items" id="ls-rb"></div>
+      </div>
+      <div class="legend-section">
+        <div class="ls-title">Bidang Administrasi Negara</div>
+        <div class="ls-desc">Kompetensi inti ASN bidang administrasi negara yang menjadi fokus diklat kepemimpinan LAN.</div>
+        <div class="ls-hukum"><b>Dasar hukum:</b> UU No. 5 Tahun 2014 tentang ASN (Pasal 69 &mdash; pengembangan kompetensi); PP No. 49 Tahun 2018 (Manajemen PNS).</div>
+        <div class="ls-items" id="ls-adm"></div>
+      </div>
+    </div>
   </div>
 
   <!-- PETA SEBARAN PROVINSI -->
@@ -539,14 +582,7 @@ function initFilters(){
     o.value = t.label; o.textContent = t.label;
     thSel.appendChild(o);
   });
-  const bidSel = document.getElementById('f-bidang');
-  stats.bidang_inovasi.forEach(b=>{
-    if(b.label && b.label !== '-'){
-      const o = document.createElement('option');
-      o.value = b.label; o.textContent = `${b.label} (${b.value})`;
-      bidSel.appendChild(o);
-    }
-  });
+  // (Bidang Inovasi dropdown disembunyikan dari toolbar)
   // Program Prioritas dropdown
   const priSel = document.getElementById('f-prioritas');
   stats.prioritas.forEach(p=>{
@@ -606,15 +642,28 @@ function initFilters(){
 }
 
 function initLegend(){
-  const grid = document.getElementById('legend-grid');
-  grid.innerHTML = DATA.stats.prioritas_desc.map(p=>`
-    <div class="legend-item">
-      <span class="legend-no">${p.no}</span>
-      <div>
-        <div class="lname">${p.nama}</div>
-        <div class="ldesc">${p.singkat}</div>
-      </div>
-    </div>`).join('');
+  // 8 Asta Cita
+  const astaEl = document.getElementById('ls-asta');
+  if(astaEl) astaEl.innerHTML = (DATA.stats.asta_cita||[]).map(a=>{
+    const short = (a.label.split(' \u2014 ')[1] || a.label).trim();
+    return `<div class="ls-item"><span class="ls-no">${a.code}</span><span>${escapeHtml(short)}</span><span class="ls-count">${a.value}</span></div>`;
+  }).join('');
+  // 8 Program Kerja Prioritas Nasional (PKPN)
+  const pkpnEl = document.getElementById('ls-pkpn');
+  if(pkpnEl) pkpnEl.innerHTML = (DATA.stats.prioritas_desc||[]).map(p=>{
+    return `<div class="ls-item"><span class="ls-no">${p.no}</span><span>${escapeHtml(p.nama)}</span></div>`;
+  }).join('');
+  // RB Tematik (10 tema + Non-Tematik)
+  const rbEl = document.getElementById('ls-rb');
+  if(rbEl) rbEl.innerHTML = (DATA.stats.rb_tematik||[]).map(r=>{
+    const short = r.label.replace(/^RB Tematik \d+ \u2014 /, '').replace(/^Non-Tematik.*/, 'Non-Tematik (RB Reguler)').trim();
+    return `<div class="ls-item"><span class="ls-no">${r.code}</span><span>${escapeHtml(short)}</span><span class="ls-count">${r.value}</span></div>`;
+  }).join('');
+  // Bidang Administrasi Negara
+  const admEl = document.getElementById('ls-adm');
+  if(admEl) admEl.innerHTML = (DATA.stats.administrasi_negara||[]).map(a=>{
+    return `<div class="ls-item"><span class="ls-no">${a.value}</span><span>${escapeHtml(a.label)}</span></div>`;
+  }).join('');
 }
 
 function applyFilter(){
@@ -624,7 +673,6 @@ function applyFilter(){
   const kat = document.getElementById('f-kategori').value;
   const pri = document.getElementById('f-prioritas').value;
   const adm = document.getElementById('f-adm').value;
-  const bid = document.getElementById('f-bidang').value;
   const dik = document.getElementById('f-diklat').value;
   const asta = document.getElementById('f-asta').value;
   const rb = document.getElementById('f-rb').value;
@@ -637,7 +685,6 @@ function applyFilter(){
     if(kat && r.kategori !== kat) return false;
     if(pri && r.prioritas_singkat !== pri) return false;
     if(adm && r.administrasi_negara !== adm) return false;
-    if(bid && r.bidang_inovasi !== bid) return false;
     if(dik && (r.jenis_diklat || '').trim() !== dik) return false;
     if(asta && r.asta_cita !== asta) return false;
     if(rb && r.rb_tematik !== rb) return false;
@@ -1223,7 +1270,7 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat','f-asta','f-rb'].forEach(id=>{
+['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-diklat','f-asta','f-rb'].forEach(id=>{
   const el = document.getElementById(id);
   const ev = id === 'f-search' ? 'input' : 'change';
   el.addEventListener(ev, ()=>{
@@ -1245,7 +1292,7 @@ document.getElementById('btn-terbaik').addEventListener('click', ()=>{
   }
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
-  ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat','f-asta','f-rb'].forEach(id=>document.getElementById(id).value='');
+  ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-diklat','f-asta','f-rb'].forEach(id=>document.getElementById(id).value='');
   onlyTerbaikOn = false;
   onlyAlumniOn = false;
   namaFocus = ''; idFocus = 0;
@@ -1295,7 +1342,6 @@ function activeFilterDesc(){
   const priSel = document.getElementById('f-prioritas');
   const priTxt = priSel && priSel.value ? (priSel.selectedOptions[0].text.split(' \u2014 ')[0] || priSel.value) : '';
   const adm    = document.getElementById('f-adm').value;
-  const bid    = document.getElementById('f-bidang').value;
   const dik    = document.getElementById('f-diklat').value;
   const astaV  = document.getElementById('f-asta').value;
   const rbV    = document.getElementById('f-rb').value;
@@ -1306,7 +1352,6 @@ function activeFilterDesc(){
   if(kat)  parts.push('Instansi: '+kat);
   if(priTxt)parts.push('Prioritas: '+priTxt);
   if(adm)  parts.push('Bidang Adm: '+adm);
-  if(bid)  parts.push('Bidang Inovasi: '+bid);
   if(dik)  parts.push('Diklat: '+dik);
   if(astaV) parts.push('Asta Cita: '+astaV);
   if(rbV)   parts.push('RB Tematik: '+rbV);
