@@ -164,8 +164,11 @@
   }
   .card h3{margin:0 0 4px;font-size:14.5px;font-weight:700;color:var(--text)}
   .card .desc{font-size:11.5px;color:var(--muted);margin-bottom:14px}
-  .chart-box{position:relative;height:300px}
+  .chart-box{position:relative;height:300px;max-width:100%;overflow:hidden}
   .chart-box.tall{height:360px}
+  /* Responsive fix: izinkan grid item & canvas mengecil di viewport sempit */
+  .grid > *{min-width:0}
+  canvas{max-width:100% !important}
 
   /* ---------- PETA SEBARAN ---------- */
   .map-card{
@@ -321,6 +324,14 @@
         <select id="f-diklat"><option value="">Semua Jenis Diklat</option></select>
       </div>
       <div class="field">
+        <label>Asta Cita</label>
+        <select id="f-asta"><option value="">Semua Asta Cita</option></select>
+      </div>
+      <div class="field">
+        <label>RB Tematik</label>
+        <select id="f-rb"><option value="">Semua RB Tematik</option></select>
+      </div>
+      <div class="field">
         <label>&nbsp;</label>
         <button class="btn-terbaik" id="btn-terbaik" type="button" title="Tampilkan hanya karya yang ditandai 'Terbaik' (kolom PERINGKAT di Excel)">
           ★ Peserta Terbaik
@@ -418,6 +429,20 @@
       <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
       <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
       <div class="map-stats" id="adm-stats" style="justify-content:center"></div>
+    </div>
+  </div>
+
+  <!-- CHART ROW 4: Asta Cita & RB Tematik -->
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>Asta Cita</h3>
+      <div class="desc">Distribusi karya berdasarkan 8 Asta Cita. Grafik mengikuti filter aktif.</div>
+      <div class="chart-box tall"><canvas id="c-asta"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>RB Tematik</h3>
+      <div class="desc">Distribusi karya berdasarkan 10 tema Reformasi Birokrasi Tematik + Non-Tematik (RB Reguler). Grafik mengikuti filter aktif.</div>
+      <div class="chart-box tall"><canvas id="c-rb"></canvas></div>
     </div>
   </div>
 
@@ -556,6 +581,25 @@ function initFilters(){
     dikSel.appendChild(o);
   });
 
+  // Asta Cita dropdown (8 kategori)
+  const astaSel = document.getElementById('f-asta');
+  (stats.asta_cita || []).forEach(a=>{
+    const o = document.createElement('option');
+    o.value = a.code;
+    const short = (a.label.split(' \u2014 ')[1] || a.label).trim();
+    o.textContent = a.code + ' \u2014 ' + short + ' (' + a.value + ')';
+    astaSel.appendChild(o);
+  });
+  // RB Tematik dropdown (10 tema + Non-Tematik)
+  const rbSel = document.getElementById('f-rb');
+  (stats.rb_tematik || []).forEach(r=>{
+    const o = document.createElement('option');
+    o.value = r.code;
+    const short = r.label.replace(/^RB Tematik \d+ \u2014 /, '').replace(/^Non-Tematik.*/, 'Non-Tematik (RB Reguler)').trim();
+    o.textContent = r.code + ' \u2014 ' + short + ' (' + r.value + ')';
+    rbSel.appendChild(o);
+  });
+
   document.getElementById('hdr-total').textContent = stats.total.toLocaleString('id-ID');
   document.getElementById('hdr-periode').textContent = `${stats.tahun_min}–${stats.tahun_max}`;
   document.getElementById('hdr-prov').textContent = stats.total_provinsi;
@@ -582,6 +626,8 @@ function applyFilter(){
   const adm = document.getElementById('f-adm').value;
   const bid = document.getElementById('f-bidang').value;
   const dik = document.getElementById('f-diklat').value;
+  const asta = document.getElementById('f-asta').value;
+  const rb = document.getElementById('f-rb').value;
 
   // baseFiltered: hasil search + dropdown saja (TANPA toggle terbaik)
   baseFiltered = DATA.records.filter(r=>{
@@ -593,6 +639,8 @@ function applyFilter(){
     if(adm && r.administrasi_negara !== adm) return false;
     if(bid && r.bidang_inovasi !== bid) return false;
     if(dik && (r.jenis_diklat || '').trim() !== dik) return false;
+    if(asta && r.asta_cita !== asta) return false;
+    if(rb && r.rb_tematik !== rb) return false;
     return true;
   });
   // filtered: baseFiltered + filter toggle "Peserta Terbaik" dan/atau "Alumni Berprestasi" (dipakai KPI/charts/map/tabel)
@@ -952,6 +1000,51 @@ function renderCharts(){
       ? dikTop.map(([l,v])=>`<span class="ms-pill">${escapeHtml(l)}: <b>${v.toLocaleString('id-ID')}</b> (${(v/dikTotal*100).toFixed(1)}%)</span>`).join('')
       : '<span class="ms-pill">Tidak ada data jenis diklat</span>';
   }
+
+  // 7. Asta Cita (bar vertikal, urut AC1..AC8)
+  const astaDesc = DATA.stats.asta_cita || [];
+  const astaCount = {};
+  filtered.forEach(r=>{ if(r.asta_cita) astaCount[r.asta_cita] = (astaCount[r.asta_cita]||0)+1; });
+  const astaLabels = astaDesc.map(a=>a.code);
+  const astaData   = astaLabels.map(c=>astaCount[c]||0);
+  destroyChart('c-asta');
+  charts['c-asta'] = new Chart(document.getElementById('c-asta'), {
+    type:'bar',
+    data:{
+      labels: astaLabels,
+      datasets:[{
+        label:'Jumlah Karya',
+        data: astaData,
+        backgroundColor: astaDesc.map((_,i)=>PALETTE[i%PALETTE.length]),
+        borderRadius:6
+      }]
+    },
+    options: chartOpts({legend:false, yInt:true, xRot:true})
+  });
+
+  // 8. RB Tematik (bar horizontal — label tema panjang)
+  const rbDesc = DATA.stats.rb_tematik || [];
+  const rbCount = {};
+  filtered.forEach(r=>{ if(r.rb_tematik) rbCount[r.rb_tematik] = (rbCount[r.rb_tematik]||0)+1; });
+  const rbLabels = rbDesc.map(a=>{
+    const short = a.label.replace(/^RB Tematik \d+ \u2014 /, '').replace(/^Non-Tematik.*/, 'Non-Tematik').trim();
+    return a.code + ' ' + short.slice(0,22);
+  });
+  const rbData = rbDesc.map(a=>rbCount[a.code]||0);
+  destroyChart('c-rb');
+  charts['c-rb'] = new Chart(document.getElementById('c-rb'), {
+    type:'bar',
+    data:{
+      labels: rbLabels,
+      datasets:[{
+        label:'Jumlah Karya',
+        data: rbData,
+        backgroundColor: rbDesc.map((_,i)=>PALETTE[i%PALETTE.length]),
+        borderRadius:6
+      }]
+    },
+    options: chartOpts({legend:false, indexAxis:'y'})
+  });
 }
 
 function chartOpts(o={}){
@@ -1130,7 +1223,7 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat'].forEach(id=>{
+['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat','f-asta','f-rb'].forEach(id=>{
   const el = document.getElementById(id);
   const ev = id === 'f-search' ? 'input' : 'change';
   el.addEventListener(ev, ()=>{
@@ -1152,7 +1245,7 @@ document.getElementById('btn-terbaik').addEventListener('click', ()=>{
   }
 });
 document.getElementById('btn-reset').addEventListener('click', ()=>{
-  ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat'].forEach(id=>document.getElementById(id).value='');
+  ['f-search','f-prov','f-tahun','f-kategori','f-prioritas','f-adm','f-bidang','f-diklat','f-asta','f-rb'].forEach(id=>document.getElementById(id).value='');
   onlyTerbaikOn = false;
   onlyAlumniOn = false;
   namaFocus = ''; idFocus = 0;
@@ -1204,6 +1297,8 @@ function activeFilterDesc(){
   const adm    = document.getElementById('f-adm').value;
   const bid    = document.getElementById('f-bidang').value;
   const dik    = document.getElementById('f-diklat').value;
+  const astaV  = document.getElementById('f-asta').value;
+  const rbV    = document.getElementById('f-rb').value;
   const parts = [];
   if(q)    parts.push('Pencarian: "'+q+'"');
   if(prov) parts.push('Provinsi: '+prov);
@@ -1213,6 +1308,8 @@ function activeFilterDesc(){
   if(adm)  parts.push('Bidang Adm: '+adm);
   if(bid)  parts.push('Bidang Inovasi: '+bid);
   if(dik)  parts.push('Diklat: '+dik);
+  if(astaV) parts.push('Asta Cita: '+astaV);
+  if(rbV)   parts.push('RB Tematik: '+rbV);
   if(onlyTerbaikOn) parts.push('\u2605 Peserta Terbaik');
   if(onlyAlumniOn)  parts.push('\U0001F3C6 Alumni Berprestasi');
   if(idFocus) parts.push('Karya terpilih: '+namaFocus);
@@ -1508,7 +1605,7 @@ function exportCurrentExcel(){
   const isAlumniExport = !!onlyAlumniOn;
   const lastHeader = isAlumniExport ? 'Prestasi' : 'Program Prioritas';
   const head = ['No','Nama','Jenis Diklat','Tahun','Asal Instansi','Asal Daerah','Provinsi',
-                'Judul Inovasi','Bidang Inovasi', lastHeader, 'Link Dokumen'];
+                'Judul Inovasi','Bidang Inovasi','Asta Cita','RB Tematik', lastHeader, 'Link Dokumen'];
   const judulCol = head.indexOf('Judul Inovasi');
   const linkCol  = head.indexOf('Link Dokumen');
 
@@ -1528,6 +1625,7 @@ function exportCurrentExcel(){
       i+1, r.nama||'', r.jenis_diklat||'', r.tahun||'', r.asal_instansi||'',
       r.asal_daerah||'', r.provinsi||'', judul,
       (r.bidang_inovasi && r.bidang_inovasi !== '-') ? r.bidang_inovasi : '',
+      r.asta_cita_label||'', r.rb_tematik_label||'',
       lastCell, lk
     ]);
   });
@@ -1545,7 +1643,7 @@ function exportCurrentExcel(){
   // Lebar kolom + autofilter agar mudah disortir/filter di Excel.
   ws['!cols'] = [
     {wch:5},{wch:24},{wch:14},{wch:8},{wch:28},{wch:22},{wch:18},
-    {wch:48},{wch:22},{wch:40},{wch:40}
+    {wch:48},{wch:22},{wch:38},{wch:42},{wch:40},{wch:40}
   ];
   ws['!autofilter'] = { ref: XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:aoa.length-1, c:head.length-1}}) };
 
