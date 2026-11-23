@@ -159,13 +159,16 @@
   .grid{display:grid;gap:18px;margin-bottom:20px}
   .grid.cols-2{grid-template-columns:1fr 1fr}
   @media(max-width:1100px){.grid.cols-2{grid-template-columns:1fr}}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:1100px){.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.grid.cols-4{grid-template-columns:1fr}}
   .card{
     background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);
   }
   .card h3{margin:0 0 4px;font-size:14.5px;font-weight:700;color:var(--text)}
   .card .desc{font-size:11.5px;color:var(--muted);margin-bottom:14px}
   .chart-box{position:relative;height:300px;max-width:100%;overflow:hidden}
-  .chart-box.tall{height:360px}
+  .chart-box.tall{height:420px}
   /* Responsive fix: izinkan grid item & canvas mengecil di viewport sempit */
   .grid > *{min-width:0}
   canvas{max-width:100% !important}
@@ -221,7 +224,7 @@
   .legend-section{border:1px solid var(--border);border-radius:10px;padding:13px 15px;background:#fafbfc}
   .legend-section .ls-title{font-size:13px;font-weight:800;color:var(--primary-dark);margin-bottom:4px;line-height:1.3}
   .legend-section .ls-desc{font-size:11.5px;color:var(--text);line-height:1.45;margin-bottom:5px}
-  .legend-section .ls-hukum{font-size:10.5px;color:#475569;font-style:italic;line-height:1.4;margin-bottom:9px;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+  .legend-section .ls-hukum{font-size:10.5px;color:#475569;font-style:italic;line-height:1.4;margin-bottom:0;padding-bottom:0}
   .legend-section .ls-items{display:flex;flex-direction:column;gap:2px}
   .legend-section .ls-item{display:flex;align-items:flex-start;gap:7px;font-size:11px;line-height:1.35;padding:2px 0}
   .legend-section .ls-no{
@@ -378,7 +381,7 @@
   <!-- KPI -->
   <div class="kpis" id="kpis"></div>
 
-  <!-- KETERANGAN KATEGORI INOVASI (4 SEKSI) -->
+  <!-- KETERANGAN KATEGORI INOVASI (4 SEKSI, deskripsi + dasar hukum) -->
   <div class="legend-card" id="legend-card">
     <h3>Keterangan Kategori Inovasi</h3>
     <div class="desc">Empat dasar kategorisasi karya inovasi alumni: Asta Cita, Program Kerja Prioritas Nasional, RB Tematik, dan Bidang Administrasi Negara.</div>
@@ -387,25 +390,21 @@
         <div class="ls-title">8 Asta Cita</div>
         <div class="ls-desc">8 misi Kabinet Merah Putih (Pemerintahan Prabowo&ndash;Gibran) sebagai agenda pembangunan nasional 2025&ndash;2029.</div>
         <div class="ls-hukum"><b>Dasar hukum:</b> Perpres No. 12 Tahun 2025 (RPJMN 2025&ndash;2029); PIDATO Presiden Prabowo Subianto pada Sidang Tahunan MPR RI, 20 Oktober 2024.</div>
-        <div class="ls-items" id="ls-asta"></div>
       </div>
       <div class="legend-section">
         <div class="ls-title">8 Program Kerja Prioritas Nasional (PKPN)</div>
         <div class="ls-desc">8 program kerja prioritas yang ditetapkan dalam RAPBN/APBN sebagai penjabaran Asta Cita.</div>
         <div class="ls-hukum"><b>Dasar hukum:</b> RAPBN/APBN (UU APBN tahunan); bersumber dari RPJMN 2025&ndash;2029 (Perpres No. 12 Tahun 2025).</div>
-        <div class="ls-items" id="ls-pkpn"></div>
       </div>
       <div class="legend-section">
         <div class="ls-title">RB Tematik (Reformasi Birokrasi Tematik)</div>
         <div class="ls-desc">10 tema prioritas RB yang diarahkan mendukung prioritas nasional. Karya non-spesifik dikategorikan &ldquo;Non-Tematik (RB Reguler)&rdquo;.</div>
         <div class="ls-hukum"><b>Dasar hukum:</b> PermenPANRB No. 3 Tahun 2023 (Road Map RB 2025&ndash;2045); PermenPANRB No. 9 Tahun 2023 (Evaluasi RB).</div>
-        <div class="ls-items" id="ls-rb"></div>
       </div>
       <div class="legend-section">
         <div class="ls-title">Bidang Administrasi Negara</div>
-        <div class="ls-desc">Kompetensi inti ASN bidang administrasi negara yang menjadi fokus diklat kepemimpinan LAN.</div>
+        <div class="ls-desc">Pengelompokan ini merujuk pada ruang lingkup pembinaan administrasi pemerintahan yang dikembangkan Kementerian PANRB: penataan organisasi (kelembagaan), penyempurnaan proses bisnis &amp; tata laksana (ketatalaksanaan), serta peningkatan kualitas pelayanan publik.</div>
         <div class="ls-hukum"><b>Dasar hukum:</b> UU No. 5 Tahun 2014 tentang ASN (Pasal 69 &mdash; pengembangan kompetensi); PP No. 49 Tahun 2018 (Manajemen PNS).</div>
-        <div class="ls-items" id="ls-adm"></div>
       </div>
     </div>
   </div>
@@ -460,32 +459,28 @@
     </div>
   </div>
 
-  <!-- CHART ROW 3: Program Prioritas & Administrasi Negara -->
-  <div class="grid cols-2">
-    <div class="card">
-      <h3>Program Prioritas</h3>
-      <div class="desc">Distribusi karya berdasarkan 8 Program Prioritas</div>
-      <div class="chart-box tall"><canvas id="c-prioritas"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Bidang Administrasi Negara</h3>
-      <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
-      <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
-      <div class="map-stats" id="adm-stats" style="justify-content:center"></div>
-    </div>
-  </div>
-
-  <!-- CHART ROW 4: Asta Cita & RB Tematik -->
-  <div class="grid cols-2">
+  <!-- CHART ROW 3 (bottom, 4 kolom): Asta Cita, Program Prioritas, RB Tematik, Bidang Administrasi Negara -->
+  <div class="grid cols-4">
     <div class="card">
       <h3>Asta Cita</h3>
       <div class="desc">Distribusi karya berdasarkan 8 Asta Cita. Grafik mengikuti filter aktif.</div>
       <div class="chart-box tall"><canvas id="c-asta"></canvas></div>
     </div>
     <div class="card">
+      <h3>Program Prioritas</h3>
+      <div class="desc">Distribusi karya berdasarkan 8 Program Prioritas + &ldquo;Tidak Ada&rdquo; (tanpa prioritas). Grafik mengikuti filter aktif.</div>
+      <div class="chart-box tall"><canvas id="c-prioritas"></canvas></div>
+    </div>
+    <div class="card">
       <h3>RB Tematik</h3>
-      <div class="desc">Distribusi karya berdasarkan 10 tema Reformasi Birokrasi Tematik + Non-Tematik (RB Reguler). Grafik mengikuti filter aktif.</div>
+      <div class="desc">10 tema RB Tematik + Non-Tematik (RB Reguler). Grafik mengikuti filter aktif.</div>
       <div class="chart-box tall"><canvas id="c-rb"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Bidang Administrasi Negara</h3>
+      <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
+      <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
+      <div class="map-stats" id="adm-stats" style="justify-content:center"></div>
     </div>
   </div>
 
@@ -642,28 +637,7 @@ function initFilters(){
 }
 
 function initLegend(){
-  // 8 Asta Cita
-  const astaEl = document.getElementById('ls-asta');
-  if(astaEl) astaEl.innerHTML = (DATA.stats.asta_cita||[]).map(a=>{
-    const short = (a.label.split(' \u2014 ')[1] || a.label).trim();
-    return `<div class="ls-item"><span class="ls-no">${a.code}</span><span>${escapeHtml(short)}</span><span class="ls-count">${a.value}</span></div>`;
-  }).join('');
-  // 8 Program Kerja Prioritas Nasional (PKPN)
-  const pkpnEl = document.getElementById('ls-pkpn');
-  if(pkpnEl) pkpnEl.innerHTML = (DATA.stats.prioritas_desc||[]).map(p=>{
-    return `<div class="ls-item"><span class="ls-no">${p.no}</span><span>${escapeHtml(p.nama)}</span></div>`;
-  }).join('');
-  // RB Tematik (10 tema + Non-Tematik)
-  const rbEl = document.getElementById('ls-rb');
-  if(rbEl) rbEl.innerHTML = (DATA.stats.rb_tematik||[]).map(r=>{
-    const short = r.label.replace(/^RB Tematik \d+ \u2014 /, '').replace(/^Non-Tematik.*/, 'Non-Tematik (RB Reguler)').trim();
-    return `<div class="ls-item"><span class="ls-no">${r.code}</span><span>${escapeHtml(short)}</span><span class="ls-count">${r.value}</span></div>`;
-  }).join('');
-  // Bidang Administrasi Negara
-  const admEl = document.getElementById('ls-adm');
-  if(admEl) admEl.innerHTML = (DATA.stats.administrasi_negara||[]).map(a=>{
-    return `<div class="ls-item"><span class="ls-no">${a.value}</span><span>${escapeHtml(a.label)}</span></div>`;
-  }).join('');
+  // Legenda statis (deskripsi + dasar hukum) — tidak perlu populasi dinamis
 }
 
 function applyFilter(){
@@ -977,10 +951,15 @@ function renderCharts(){
     options: chartOpts({legend:false, indexAxis:'y'})
   });
 
-  // 4. Program Prioritas (bar vertikal, urut sesuai nomor 1-8)
+  // 4. Program Prioritas (bar horizontal — nama lengkap + "Tidak Ada")
   const priorDesc = DATA.stats.prioritas_desc;
-  const priorLabels = priorDesc.map(p=>p.singkat);
-  const priorData = priorLabels.map(l=>priorCount[l]||0);
+  const priorLabels = priorDesc.map(p=>p.no + ' ' + p.nama.slice(0,18));
+  const priorData = priorDesc.map(p=>priorCount[p.singkat]||0);
+  const priorColors = priorDesc.map((_,i)=>PALETTE[i%PALETTE.length]);
+  // Tambah kategori "Tidak Ada" (karya tanpa prioritas)
+  priorLabels.push('Tidak Ada');
+  priorData.push(priorCount['Tidak Ada']||0);
+  priorColors.push('#94a3b8');
   destroyChart('c-prioritas');
   charts['c-prioritas'] = new Chart(document.getElementById('c-prioritas'), {
     type:'bar',
@@ -989,11 +968,11 @@ function renderCharts(){
       datasets:[{
         label:'Jumlah Karya',
         data: priorData,
-        backgroundColor: priorDesc.map((_,i)=>PALETTE[i%PALETTE.length]),
+        backgroundColor: priorColors,
         borderRadius:6
       }]
     },
-    options: chartOpts({legend:false, yInt:true, xRot:true})
+    options: chartOpts({legend:false, indexAxis:'y'})
   });
 
   // 5. Bidang Administrasi Negara (doughnut)
@@ -1048,12 +1027,15 @@ function renderCharts(){
       : '<span class="ms-pill">Tidak ada data jenis diklat</span>';
   }
 
-  // 7. Asta Cita (bar vertikal, urut AC1..AC8)
+  // 7. Asta Cita (bar horizontal — label nama lengkap agar terbaca jelas)
   const astaDesc = DATA.stats.asta_cita || [];
   const astaCount = {};
   filtered.forEach(r=>{ if(r.asta_cita) astaCount[r.asta_cita] = (astaCount[r.asta_cita]||0)+1; });
-  const astaLabels = astaDesc.map(a=>a.code);
-  const astaData   = astaLabels.map(c=>astaCount[c]||0);
+  const astaLabels = astaDesc.map(a=>{
+    const short = (a.label.split(' \u2014 ')[1] || a.label).trim().slice(0,16);
+    return a.code + ' ' + short;
+  });
+  const astaData = astaDesc.map(a=>astaCount[a.code]||0);
   destroyChart('c-asta');
   charts['c-asta'] = new Chart(document.getElementById('c-asta'), {
     type:'bar',
@@ -1066,7 +1048,7 @@ function renderCharts(){
         borderRadius:6
       }]
     },
-    options: chartOpts({legend:false, yInt:true, xRot:true})
+    options: chartOpts({legend:false, indexAxis:'y'})
   });
 
   // 8. RB Tematik (bar horizontal — label tema panjang)
@@ -1075,7 +1057,7 @@ function renderCharts(){
   filtered.forEach(r=>{ if(r.rb_tematik) rbCount[r.rb_tematik] = (rbCount[r.rb_tematik]||0)+1; });
   const rbLabels = rbDesc.map(a=>{
     const short = a.label.replace(/^RB Tematik \d+ \u2014 /, '').replace(/^Non-Tematik.*/, 'Non-Tematik').trim();
-    return a.code + ' ' + short.slice(0,22);
+    return a.code + ' ' + short.slice(0,18);
   });
   const rbData = rbDesc.map(a=>rbCount[a.code]||0);
   destroyChart('c-rb');
@@ -1111,8 +1093,8 @@ function chartOpts(o={}){
   }
   if(o.indexAxis === 'y'){
     opts.scales = {
-      x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:11}, precision:0}, stacked:o.stacked||false},
-      y:{grid:{display:false, drawBorder:false}, ticks:{font:{size:11}}, stacked:o.stacked||false}
+      x:{grid:{color:'#f1f5f9', drawBorder:false}, ticks:{font:{size:10}, precision:0}, stacked:o.stacked||false},
+      y:{grid:{display:false, drawBorder:false}, ticks:{font:{size:10}, autoSkip:false}, stacked:o.stacked||false}
     };
   }
   if(o.doughnut){ opts.scales = {}; opts.cutout = '62%'; }
