@@ -68,6 +68,8 @@
   .btn:hover{background:var(--primary-dark)}
   .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
   .btn.ghost:hover{background:#f8fafc}
+  .btn-reset{color:#fff;background:#e11d48;border:1px solid #be123c;font-weight:600;cursor:pointer}
+  .btn-reset:hover{background:#be123c;border-color:#9f1239;box-shadow:0 2px 8px rgba(225,29,72,.25)}
 
   /* ---------- KPI ---------- */
   /* KPI: 6 kartu dalam 1 baris; di bawah 1100px → 3 kolom, di bawah 640px → 1 kolom */
@@ -159,6 +161,9 @@
   .grid{display:grid;gap:18px;margin-bottom:20px}
   .grid.cols-2{grid-template-columns:1fr 1fr}
   @media(max-width:1100px){.grid.cols-2{grid-template-columns:1fr}}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:1100px){.grid.cols-3{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.grid.cols-3{grid-template-columns:1fr}}
   .grid.cols-4{grid-template-columns:repeat(4,1fr)}
   @media(max-width:1100px){.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.grid.cols-4{grid-template-columns:1fr}}
@@ -298,6 +303,7 @@
       <span class="pill">Data: <b id="hdr-total">0</b> dokumen</span>
       <span class="pill">Periode <b id="hdr-periode">—</b></span>
       <span class="pill"><b id="hdr-prov">0</b> provinsi</span>
+      <span class="pill">Last update <b>24 November 2026</b></span>
     </div>
   </div>
 </header>
@@ -348,8 +354,11 @@
         <label>Bidang Administrasi Negara</label>
         <select id="f-adm"><option value="">Semua Bidang</option></select>
       </div>
-      <!-- spacer: paksa tombol row 3 mulai di kolom 1 (isi sel ke-5 row 2) -->
-      <div aria-hidden="true"></div>
+      <!-- Reset Filter (row 2, kolom 5) -->
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="btn-reset" id="btn-reset" type="button" style="width:100%;justify-content:center" title="Hapus semua filter dan kembali ke tampilan awal">&#x21bb; Reset Filter</button>
+      </div>
       <!-- Row 3: aksi -->
       <div class="field">
         <label>&nbsp;</label>
@@ -370,10 +379,6 @@
       <div class="field">
         <label>Export Excel</label>
         <button class="btn-export-excel" id="btn-export-excel" type="button" style="width:100%;justify-content:center" title="Unduh hasil pencarian/filter aktif saat ini sebagai file Excel (.xlsx)">⬇ Excel</button>
-      </div>
-      <div class="field">
-        <label>&nbsp;</label>
-        <button class="btn ghost" id="btn-reset" style="width:100%">Reset Filter</button>
       </div>
     </div>
   </div>
@@ -404,7 +409,6 @@
       <div class="legend-section">
         <div class="ls-title">Bidang Administrasi Negara</div>
         <div class="ls-desc">Pengelompokan ini merujuk pada ruang lingkup pembinaan administrasi pemerintahan yang dikembangkan Kementerian PANRB: penataan organisasi (kelembagaan), penyempurnaan proses bisnis &amp; tata laksana (ketatalaksanaan), serta peningkatan kualitas pelayanan publik.</div>
-        <div class="ls-hukum"><b>Dasar hukum:</b> UU No. 5 Tahun 2014 tentang ASN (Pasal 69 &mdash; pengembangan kompetensi); PP No. 49 Tahun 2018 (Manajemen PNS).</div>
       </div>
     </div>
   </div>
@@ -453,14 +457,15 @@
       <div class="chart-box tall"><canvas id="c-prov"></canvas></div>
     </div>
     <div class="card">
-      <h3>Top 12 Bidang Inovasi</h3>
-      <div class="desc">12 bidang inovasi dengan karya terbanyak — kategori lainnya tetap tersedia pada filter Bidang Inovasi.</div>
-      <div class="chart-box tall"><canvas id="c-bidang"></canvas></div>
+      <h3>Bidang Administrasi Negara</h3>
+      <div class="desc">Distribusi karya berdasarkan bidang administrasi negara (kelembagaan, ketatalaksanaan, pelayanan publik).</div>
+      <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
+      <div class="map-stats" id="adm-stats" style="justify-content:center"></div>
     </div>
   </div>
 
-  <!-- CHART ROW 3 (bottom, 4 kolom): Asta Cita, Program Prioritas, RB Tematik, Bidang Administrasi Negara -->
-  <div class="grid cols-4">
+  <!-- CHART ROW 3 (bottom, 3 kolom): Asta Cita, Program Prioritas, RB Tematik -->
+  <div class="grid cols-3">
     <div class="card">
       <h3>Asta Cita</h3>
       <div class="desc">Distribusi karya berdasarkan 8 Asta Cita. Grafik mengikuti filter aktif.</div>
@@ -475,12 +480,6 @@
       <h3>RB Tematik</h3>
       <div class="desc">10 tema RB Tematik + Non-Tematik (RB Reguler). Grafik mengikuti filter aktif.</div>
       <div class="chart-box tall"><canvas id="c-rb"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Bidang Administrasi Negara</h3>
-      <div class="desc">Distribusi karya berdasarkan bidang administrasi negara</div>
-      <div class="chart-box tall"><canvas id="c-adm"></canvas></div>
-      <div class="map-stats" id="adm-stats" style="justify-content:center"></div>
     </div>
   </div>
 
@@ -934,22 +933,7 @@ function renderCharts(){
     options: chartOpts({legend:false, indexAxis:'y'})
   });
 
-  // 3. Top 12 bidang inovasi (bar horizontal)
-  const bidTop = Object.entries(bidangCount).sort((a,b)=>b[1]-a[1]).slice(0,12).reverse();
-  destroyChart('c-bidang');
-  charts['c-bidang'] = new Chart(document.getElementById('c-bidang'), {
-    type:'bar',
-    data:{
-      labels: bidTop.map(p=>p[0]),
-      datasets:[{
-        label:'Jumlah Karya',
-        data: bidTop.map(p=>p[1]),
-        backgroundColor: bidTop.map((_,i)=>PALETTE[i%PALETTE.length]),
-        borderRadius:6
-      }]
-    },
-    options: chartOpts({legend:false, indexAxis:'y'})
-  });
+  // 3. (Top 12 Bidang Inovasi dihapus — posisi digantikan chart Bidang Administrasi Negara di row 2)
 
   // 4. Program Prioritas (bar horizontal — nama lengkap + "Tidak Ada")
   const priorDesc = DATA.stats.prioritas_desc;
